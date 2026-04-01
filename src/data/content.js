@@ -53,7 +53,7 @@ export const education = [
 export const experience = [
   {
     company: 'Tesla',
-    role: 'Software Engineer',
+    role: 'Software Engineer Intern',
     period: 'Jan 2026 – Present',
     location: 'Fremont, CA',
     color: '#e31937',
