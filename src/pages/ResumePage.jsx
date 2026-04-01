@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FiArrowLeft, FiDownload, FiMail, FiGlobe } from 'react-icons/fi'
+import { FiArrowLeft, FiDownload, FiMail, FiGlobe, FiExternalLink } from 'react-icons/fi'
 import { FiGithub, FiLinkedin } from 'react-icons/fi'
 import { useMode } from '../context/ModeContext'
 import { resumeData } from '../data/resume'
 
 export default function ResumePage() {
   const { setShowResume, isRecruiter, theme } = useMode()
-  const { header, experience, skills, education } = resumeData
+  const { header, experience, projects, skills, education } = resumeData
   const accentColor = isRecruiter ? '#7c3aed' : '#10b981'
 
   // Lock background scroll
@@ -109,6 +109,29 @@ export default function ResumePage() {
                     </div>
                     <ul className="list-disc list-outside ml-5 space-y-[3px]">
                       {job.bullets.map((bullet, j) => (
+                        <li key={j} className="text-[11.5px] text-gray-700 leading-relaxed">
+                          <BulletText text={bullet} accentColor={accentColor} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </ResumeSection>
+
+              {/* ── Projects ── */}
+              <ResumeSection title="Projects" accentColor={accentColor}>
+                {projects.map((proj, i) => (
+                  <div key={i} className={i > 0 ? 'mt-4' : ''}>
+                    <div className="flex items-baseline gap-1.5 mb-1">
+                      <span className="text-[13px] font-bold text-gray-900">{proj.title}</span>
+                      <span className="text-gray-400 text-[11px]">|</span>
+                      <span className="text-[11px] text-gray-500 italic">{proj.tech}</span>
+                      <a href={proj.link} target="_blank" rel="noopener noreferrer" className="ml-1 flex items-center gap-0.5 text-[11px] hover:text-gray-900 underline underline-offset-2" style={{ color: accentColor }}>
+                        <FiExternalLink size={10} /> Link
+                      </a>
+                    </div>
+                    <ul className="list-disc list-outside ml-5 space-y-[3px]">
+                      {proj.bullets.map((bullet, j) => (
                         <li key={j} className="text-[11.5px] text-gray-700 leading-relaxed">
                           <BulletText text={bullet} accentColor={accentColor} />
                         </li>

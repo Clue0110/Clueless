@@ -27,17 +27,6 @@ export const resumeData = {
       ],
     },
     {
-      company: 'NYU IT – High Speed Research Network Lab',
-      title: 'Network Engineer',
-      period: 'Jan 2025 – Present',
-      description: 'Container Orchestration, Network Design and Research.',
-      bullets: [
-        'Reduced environment setup time by 96% (1 hr to under 2 mins) and cut resource consumption by 50% by containerizing a Kea DHCP, FastAPI, and PostgreSQL network management solution with Docker and Docker Compose.',
-        'Eliminated 100% of licensing costs by developing a REST API interface for Kea DHCP service on Linux/Unix systems.',
-        'Strengthened network security by architecting a Syslog monitoring pipeline to detect SSH logins, triggering real-time alerts via Matrix/Element that provided 100% visibility across distributed switches.',
-      ],
-    },
-    {
       company: 'Citrix (Cloud Software Group)',
       title: 'Software Engineer 2',
       period: 'Sept 2023 – Aug 2024',
@@ -70,7 +59,7 @@ export const resumeData = {
       bullets: [
         'Cut kernel test time by 96% by building a full-stack web app (Flask, React) for rapid isolated testing.',
         'Reduced server load by 20% by blocking malicious bots with browser fingerprinting in JavaScript and C++.',
-        "Slashed processing overhead by 30% while enhancing the positive security model, by optimizing C-code within Netscaler's kernel packet engine, focusing on high-performance L2/L3 layer packet processing.",
+        "Reduced processing overhead by 30% while enhancing the positive security model, engineering optimized C-code directly inside the Netscaler kernel's core packet engine.",
       ],
     },
   ],
@@ -86,11 +75,32 @@ export const resumeData = {
     },
     {
       category: 'Technologies & Frameworks',
-      items: ['Docker', 'Kubernetes', 'Jenkins CI/CD', 'AWS', 'Azure', 'GCP', 'FastAPI', 'Flask', 'Django', 'ReactJS', 'Git', 'TensorFlow', 'PyTorch', 'Spark', 'Kafka', 'Elasticsearch', 'Logstash', 'Kibana', 'Terraform'],
+      items: ['Docker', 'Kubernetes', 'Jenkins CI/CD', 'AWS', 'Azure', 'GCP', 'FastAPI', 'Flask', 'Django', 'ReactJS', 'Git', 'TensorFlow', 'PyTorch', 'Spark', 'Kafka', 'Elasticsearch', 'Logstash', 'Kibana', 'Terraform', 'Cursor'],
     },
     {
       category: 'Core Skills',
       items: ['Fullstack Development', 'Backend Development', 'System Design', 'Microservices', 'REST API', 'Kernel Development'],
+    },
+  ],
+
+  projects: [
+    {
+      title: 'WeaveAI',
+      tech: 'ReactJS, FastAPI, LangChain, LLMs, MongoDB, ChromaDB, Redis, RAG, Prompt Engineering, GenAI',
+      link: 'https://github.com/Clue0110/WeaveAI',
+      bullets: [
+        'Built an AI learning platform (ReactJS, FastAPI) using LangChain to orchestrate LLMs for custom curricula generation.',
+        'Engineered a RAG pipeline with a multi-database backend (ChromaDB, MongoDB, Redis) and automated podcast/quiz generation, reducing tutor response time by 95% and boosting user engagement by 40%.',
+      ],
+    },
+    {
+      title: 'VibeTrader',
+      tech: 'ReactJS, Flask, Kafka, SparkNLP, LSTM, TensorFlow, MLOps, Spark, AI Agents, Dask, Finance',
+      link: 'https://github.com/Clue0110/VibeTrader',
+      bullets: [
+        'Developed a smart trading platform fusing market data with a tri-modal sentiment engine to improve stock predictions.',
+        'Implemented an end-to-end ETL pipeline using Selenium & PySpark and a Kafka streaming architecture on a multi-database backend (PostgreSQL, MongoDB, Redis) for live alerts & improving inference optimization by 70%.',
+      ],
     },
   ],
 
