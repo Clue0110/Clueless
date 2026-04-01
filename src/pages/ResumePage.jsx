@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FiArrowLeft, FiDownload, FiMail, FiPhone, FiGlobe } from 'react-icons/fi'
+import { FiArrowLeft, FiDownload, FiMail, FiGlobe } from 'react-icons/fi'
 import { FiGithub, FiLinkedin } from 'react-icons/fi'
 import { useMode } from '../context/ModeContext'
 import { resumeData } from '../data/resume'
@@ -79,9 +79,6 @@ export default function ResumePage() {
                   {header.location}&nbsp;&nbsp;·&nbsp;&nbsp;{header.tagline}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-gray-600">
-                  <a href={`tel:${header.phone}`} className="flex items-center gap-1 hover:text-gray-900">
-                    <FiPhone size={10} /> {header.phone}
-                  </a>
                   <a href={`mailto:${header.email}`} className="flex items-center gap-1 hover:text-gray-900 underline underline-offset-2">
                     <FiMail size={10} /> {header.email}
                   </a>
