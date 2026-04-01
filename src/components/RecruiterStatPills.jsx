@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { scaleIn } from '../utils/animations'
 
 // ── Sparkline SVG ──────────────────────────────────────────────────────────
 function Sparkline() {
@@ -60,8 +59,9 @@ function CompanyTag({ name, color }) {
 function ExperienceCard() {
   return (
     <motion.div
-      variants={scaleIn}
-      custom={0}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0, ease: [0.22, 1, 0.36, 1] }}
       className="relative p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default overflow-hidden transition-all duration-300 hover:border-violet-500/30 flex flex-col justify-between"
     >
       {/* Top: full-width sparkline */}
@@ -80,8 +80,9 @@ function ExperienceCard() {
 function CompaniesCard() {
   return (
     <motion.div
-      variants={scaleIn}
-      custom={1}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30"
     >
       <div className="text-3xl font-black text-violet-400 font-sans mb-1">5</div>
@@ -97,8 +98,9 @@ function CompaniesCard() {
 function DAUCard() {
   return (
     <motion.div
-      variants={scaleIn}
-      custom={2}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
       className="relative p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30 overflow-hidden"
     >
       {/* Live pulse dot */}
@@ -120,8 +122,9 @@ function DAUCard() {
 function FeaturesCard() {
   return (
     <motion.div
-      variants={scaleIn}
-      custom={3}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
       className="p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30"
     >
       <div className="text-3xl font-black text-violet-400 font-sans mb-1">27+</div>
