@@ -1,14 +1,18 @@
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FiGithub, FiChevronDown } from 'react-icons/fi'
 import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
 import TiltCard from '../components/TiltCard'
 import Tag from '../components/Tag'
 import { projects } from '../data/content'
-import { fadeInUp, scaleIn } from '../utils/animations'
-import { FiGithub, FiExternalLink } from 'react-icons/fi'
+import { scaleIn } from '../utils/animations'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 function ProjectCard({ project, index }) {
   const { isRecruiter, theme, mode } = useMode()
+  const [mobileExpanded, setMobileExpanded] = useState(false)
+  const isMobile = useIsMobile()
 
   const description = isRecruiter ? project.description.recruiter : project.description.dev
   const bullets = isRecruiter ? project.bullets.recruiter : project.bullets.dev
@@ -51,25 +55,60 @@ function ProjectCard({ project, index }) {
           </motion.p>
         </AnimatePresence>
 
-        {/* Bullets */}
-        <AnimatePresence mode="wait">
-          <motion.ul
-            key={mode + '-bullets-' + project.title}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-2 mb-5 flex-1"
+        {/* Mobile expand toggle */}
+        {isMobile && (
+          <button
+            onClick={() => setMobileExpanded(e => !e)}
+            className={`w-full flex items-center justify-between text-xs ${theme.accent} ${theme.font} py-1 mb-2`}
           >
-            {bullets.map((bullet, i) => (
-              <li
-                key={i}
-                className={`flex items-start gap-2 text-xs ${theme.muted} ${theme.font} leading-relaxed`}
-              >
-                <span className={`mt-1 w-1 h-1 rounded-full flex-shrink-0 ${theme.accentBg}`} />
-                {bullet}
-              </li>
-            ))}
-          </motion.ul>
+            <span>
+              {mobileExpanded
+                ? (isRecruiter ? 'Hide details' : 'collapse()')
+                : (isRecruiter ? 'Show details' : 'expand()')
+              }
+            </span>
+            <motion.span
+              animate={{ rotate: mobileExpanded ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <FiChevronDown size={14} />
+            </motion.span>
+          </button>
+        )}
+
+        {/* Bullets */}
+        <AnimatePresence initial={false}>
+          {(!isMobile || mobileExpanded) && (
+            <motion.div
+              key="bullets"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              style={{ overflow: 'hidden' }}
+              transition={{ duration: 0.3 }}
+              className="flex-1"
+            >
+              <AnimatePresence mode="wait">
+                <motion.ul
+                  key={mode + '-bullets-' + project.title}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-2 mb-5"
+                >
+                  {bullets.map((bullet, i) => (
+                    <li
+                      key={i}
+                      className={`flex items-start gap-2 text-xs ${theme.muted} ${theme.font} leading-relaxed`}
+                    >
+                      <span className={`mt-1 w-1 h-1 rounded-full flex-shrink-0 ${theme.accentBg}`} />
+                      {bullet}
+                    </li>
+                  ))}
+                </motion.ul>
+              </AnimatePresence>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Tags */}

@@ -4,21 +4,21 @@ import { useMode } from '../context/ModeContext'
 import { personal } from '../data/content'
 import AnimatedText from '../components/AnimatedText'
 import { fadeInUp } from '../utils/animations'
-import { FiGithub, FiLinkedin, FiMail, FiArrowDown } from 'react-icons/fi'
+import { FiGithub, FiLinkedin, FiMail, FiArrowDown, FiFileText } from 'react-icons/fi'
 
 const Beams = lazy(() => import('../components/Beams'))
 
 export default function Hero() {
-  const { isRecruiter, theme, mode } = useMode()
+  const { isRecruiter, theme, mode, setShowResume } = useMode()
 
-  const tagline = isRecruiter ? personal.tagline.recruiter : personal.tagline.dev
+  let tagline = isRecruiter ? personal.tagline.recruiter : personal.tagline.dev
 
   const beamColor = isRecruiter ? '#B19EEF' : '#6EE7B7'
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* ── Beams background ── */}
       <div className="absolute inset-0 z-0">
@@ -41,8 +41,8 @@ export default function Hero() {
       </div>
 
       {/* ── Content: image LEFT + text RIGHT ── */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-28 pb-20">
-        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-28 pb-20 flex flex-col items-center justify-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 w-full md:w-auto mx-auto">
 
           {/* Profile image */}
           <motion.div
@@ -57,10 +57,10 @@ export default function Hero() {
               style={{ transform: 'scaleY(1.06)' }}
             >
               <img
-                src="/avatar.jpg"
+                src="/ProfileImage.jpeg"
                 alt="Sai Akilesh Venigalla"
-                className="w-full h-full object-cover"
-                style={{ transform: 'scaleY(0.94)' }}
+                className="w-full h-full object-cover object-center"
+                style={{ objectPosition: 'center', width: '100%', height: '100%', transform: 'scale(1.25)' }}
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'
                   e.currentTarget.nextSibling.style.display = 'flex'
@@ -100,7 +100,7 @@ export default function Hero() {
               <div className="text-5xl md:text-6xl lg:text-7xl">
                 <AnimatedText text="Sai Akilesh" />
               </div>
-              <div className={`text-5xl md:text-6xl lg:text-7xl ${theme.gradientText}`}>
+              <div className={`text-5xl md:text-6xl lg:text-7xl pb-1 ${theme.gradientText}`}>
                 <AnimatedText text="Venigalla" />
               </div>
             </h1>
@@ -113,7 +113,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className={`text-base md:text-lg mb-8 ${theme.muted} ${theme.font} transition-all duration-500 max-w-xl`}
+                className={`text-base md:text-lg mb-8 ${theme.muted} ${theme.font} transition-all duration-500 max-w-xl whitespace-pre-line`}
               >
                 {isRecruiter ? tagline : (
                   <span>
@@ -140,6 +140,16 @@ export default function Hero() {
               >
                 {isRecruiter ? 'View Experience' : "see what i've built"}
               </motion.a>
+
+              <motion.button
+                onClick={() => setShowResume(true)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border ${theme.border} ${theme.muted} glass transition-all duration-300`}
+              >
+                <FiFileText size={15} />
+                {isRecruiter ? 'Resume' : 'resume'}
+              </motion.button>
 
               <div className="flex items-center gap-3">
                 {[

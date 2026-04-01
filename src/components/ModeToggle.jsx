@@ -24,7 +24,7 @@ export default function ModeToggle() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
-          {isRecruiter ? '👔 Recruiter' : '🧑‍💻 Developer'}
+          {isRecruiter ? '/recruiter' : '/developer'}
         </motion.span>
       </AnimatePresence>
       <span className="text-xs opacity-50">⇄</span>

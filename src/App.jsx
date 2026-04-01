@@ -8,9 +8,10 @@ import Experience from './sections/Experience'
 import Projects from './sections/Projects'
 import Education from './sections/Education'
 import Contact from './sections/Contact'
+import ResumePage from './pages/ResumePage'
 
 function AppContent() {
-  const { isRecruiter, theme, mode } = useMode()
+  const { isRecruiter, theme, mode, showResume } = useMode()
 
   return (
     <div
@@ -29,6 +30,10 @@ function AppContent() {
         <Education />
         <Contact />
       </main>
+
+      <AnimatePresence>
+        {showResume && <ResumePage />}
+      </AnimatePresence>
     </div>
   )
 }

@@ -2,13 +2,13 @@
 export const personal = {
   name: 'Sai Akilesh Venigalla',
   location: 'New York, NY',
-  email: 'saiakilesh101@gmail.com',
+  email: 'clueless101.exe@gmail.com',
   phone: '+1 347 477 8764',
   linkedin: 'https://www.linkedin.com/in/sai-akilesh/',
   github: 'https://github.com/Clue0110',
   website: 'https://clueless.nyc',
   tagline: {
-    recruiter: 'Software Engineer @ Tesla · NYU CS · Building Scalable Distributed Systems',
+    recruiter: 'Software Engineer @ Tesla · NYU CS \n Building Scalable Distributed Systems',
     dev: 'building stuff at tesla // broke things at citrix for 3 years // nyu cs',
   },
   bio: {
@@ -164,18 +164,18 @@ export const experience = [
   },
   {
     company: 'Samsung R&D',
-    role: 'Research Intern — Panoramic Video Stitching',
+    role: 'Research Intern — 4K Panoramic Movie Recording',
     period: 'May 2021 – Nov 2021',
     location: 'Bangalore, India',
     color: '#1428a0',
     bullets: {
       recruiter: [
-        'Engineered real-time dual-camera panoramic video stitching module using Python + OpenCV — achieved sub-100ms per-frame processing via SIFT feature matching, RANSAC homography, and multi-threaded pipeline.',
+        'Engineered a system to record a panoramic 4K movie using multiple phones — synchronized dual-camera capture, real-time stitching with Python + OpenCV, and sub-100ms per-frame processing.',
         'Implemented histogram matching + multi-band blending — eliminated visible seams, maintained 99% source resolution, and reduced user-reported visual artifacts by 30%.',
         'Built multi-threaded Tkinter diagnostic GUI — real-time visualization of individual camera feeds alongside stitched panoramic output for live debugging.',
       ],
       dev: [
-        'stitched two phone cameras into one panoramic video in real-time. SIFT for feature matching, RANSAC for homography, multi-threading to hit <100ms per frame. math is beautiful.',
+        'recorded a panoramic 4K movie using multiple phones. synchronized capture, stitched feeds in real-time (<100ms per frame) with SIFT, RANSAC, and multi-threading.',
         'the seam between cameras was ugly — fixed it with histogram matching + multi-band blending. 99% resolution preserved, 30% fewer user complaints.',
         'built a tkinter gui that shows both camera feeds + the stitched output side by side in real-time. threading was key — can\'t block the UI thread.',
       ],
@@ -183,18 +183,18 @@ export const experience = [
   },
   {
     company: 'Samsung R&D',
-    role: 'Research Intern — Object Eraser',
+    role: 'Research Intern — Neural Inpainting',
     period: 'Oct 2020 – Mar 2021',
     location: 'Bangalore, India',
     color: '#1428a0',
     bullets: {
       recruiter: [
-        'Developed custom GAN-based neural inpainting model for Samsung\'s Object Eraser — trained on 350,000+ indoor images for robust background reconstruction.',
+        'Developed a simple AI eraser using a custom GAN-based neural inpainting model — trained on 350,000+ indoor images for robust background reconstruction.',
         'Built automated image scraper in Python — harvested diverse 350K-image dataset from Google Image Search, accelerating R&D timelines; praised by Samsung leadership.',
         'Trained flash-artifact removal GAN — enabled clean inpainting under harsh lighting conditions, improving real-world reliability.',
       ],
       dev: [
-        'trained a GAN to erase objects from photos and reconstruct the background — the samsung object eraser feature. fed it 350k images i scraped from google.',
+        'trained a GAN to erase objects from photos and reconstruct the background — a simple AI eraser feature. fed it 350k images i scraped from google.',
         'built a python scraper to automate the dataset collection. samsung liked it so much they called it out specifically.',
         'phone flash artifacts were destroying the inpainting results. trained a separate GAN just to nuke the flash glare before reconstruction. clean results.',
       ],
@@ -202,7 +202,7 @@ export const experience = [
   },
   {
     company: 'Samsung R&D',
-    role: 'Research Intern — Gait Analysis',
+    role: 'Research Intern — Anomaly Detection',
     period: 'Jan 2020 – Aug 2020',
     location: 'Bangalore, India',
     color: '#1428a0',
@@ -337,13 +337,11 @@ export const projects = [
 // ─── Stats / Metrics Pills ───
 export const stats = {
   recruiter: [
-    { label: 'Years of Experience', value: '5+' },
+    { label: 'Companies', value: 'Tesla, Citrix, NYU, Samsung, Virtusa' },
     { label: 'Companies Shipped At', value: '5' },
-    { label: 'Avg Performance Gain', value: '60%+' },
     { label: 'DAU Scaled To', value: '3.5M+' },
   ],
   dev: [
-    { label: 'years shipping code', value: '5+' },
     { label: 'companies deep', value: '5' },
     { label: 'legacy codebases survived', value: '3' },
     { label: 'kafka topics created', value: '∞' },

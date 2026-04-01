@@ -82,7 +82,7 @@ export default function Navbar() {
           whileHover={{ scale: 1.05 }}
           className={`text-base font-bold ${theme.accent} whitespace-nowrap transition-colors duration-500`}
         >
-          {isRecruiter ? 'SAV' : '~/akilesh'}
+          {'clueless'}
         </motion.a>
 
         {/* Desktop links */}

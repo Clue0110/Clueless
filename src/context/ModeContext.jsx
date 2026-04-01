@@ -14,6 +14,7 @@ export function ModeProvider({ children }) {
     }
     return MODES.RECRUITER
   })
+  const [showResume, setShowResume] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('portfolio-mode', mode)
@@ -66,7 +67,7 @@ export function ModeProvider({ children }) {
       }
 
   return (
-    <ModeContext.Provider value={{ mode, setMode, toggleMode, isRecruiter, isDev, theme }}>
+    <ModeContext.Provider value={{ mode, setMode, toggleMode, isRecruiter, isDev, theme, showResume, setShowResume }}>
       {children}
     </ModeContext.Provider>
   )

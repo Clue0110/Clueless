@@ -4,10 +4,10 @@ import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
 import { personal } from '../data/content'
 import { fadeInUp } from '../utils/animations'
-import { FiGithub, FiLinkedin, FiMail, FiCopy, FiCheck } from 'react-icons/fi'
+import { FiGithub, FiLinkedin, FiMail, FiCopy, FiCheck, FiFileText } from 'react-icons/fi'
 
 export default function Contact() {
-  const { isRecruiter, theme } = useMode()
+  const { isRecruiter, theme, setShowResume } = useMode()
   const [copied, setCopied] = useState(false)
 
   const copyEmail = async () => {
@@ -67,7 +67,7 @@ export default function Contact() {
         </motion.button>
 
         {/* Social links */}
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4 flex-wrap">
           {links.map((link, i) => (
             <motion.a
               key={link.label}
@@ -83,6 +83,16 @@ export default function Contact() {
               {isRecruiter ? link.recruiter : link.dev}
             </motion.a>
           ))}
+          <motion.button
+            onClick={() => setShowResume(true)}
+            variants={fadeInUp}
+            custom={links.length + 1}
+            whileHover={{ scale: 1.1, y: -3 }}
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl border ${theme.border} ${theme.card} glass glass-hover ${theme.muted} hover:${isRecruiter ? 'text-violet-400' : 'text-green-400'} transition-all duration-300 ${theme.font} text-sm`}
+          >
+            <FiFileText size={22} />
+            {isRecruiter ? 'Resume' : 'resume'}
+          </motion.button>
         </div>
       </motion.div>
 
