@@ -57,7 +57,7 @@ export default function Hero() {
               style={{ transform: 'scaleY(1.06)' }}
             >
               <img
-                src="/ProfileImage.jpeg"
+                src={`${import.meta.env.BASE_URL}ProfileImage.jpeg`}
                 alt="Sai Akilesh Venigalla"
                 className="w-full h-full object-cover object-center"
                 style={{ objectPosition: 'center', width: '100%', height: '100%', transform: 'scale(1.25)' }}

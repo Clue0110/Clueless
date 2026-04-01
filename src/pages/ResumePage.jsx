@@ -42,7 +42,7 @@ export default function ResumePage() {
         </span>
 
         <motion.a
-          href="/resume.pdf"
+          href={`${import.meta.env.BASE_URL}resume.pdf`}
           download="Resume_Venigalla.pdf"
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}

@@ -58,22 +58,6 @@ Then in **Settings → Pages**, set source to `gh-pages` branch.
 
 ---
 
-## Custom Domain (`clueless.nyc`)
-
-1. The file `public/CNAME` already contains `clueless.nyc`.
-2. In your DNS provider, add:
-   - **A records** pointing to GitHub Pages IPs:
-     ```
-     185.199.108.153
-     185.199.109.153
-     185.199.110.153
-     185.199.111.153
-     ```
-   - Or a **CNAME record**: `www` → `clue0110.github.io`
-3. In repo **Settings → Pages → Custom domain**, enter `clueless.nyc` and check **Enforce HTTPS**.
-
----
-
 ## Project Structure
 
 ```

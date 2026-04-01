@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
 import { personal, stats } from '../data/content'
-import { fadeInUp, scaleIn } from '../utils/animations'
+
 import TerminalAbout from '../components/TerminalAbout'
 import RecruiterStatPills from '../components/RecruiterStatPills'
 
@@ -14,15 +14,27 @@ export default function About() {
 
   return (
     <Section id="about" title="About" devTitle="about me">
-      {isDev ? (
-        <motion.div variants={fadeInUp}>
-          <TerminalAbout />
-        </motion.div>
-      ) : (
-        <>
-          {/* Top row: bio */}
-          <div className="mb-10">
-            <motion.div variants={fadeInUp}>
+      <AnimatePresence mode="wait">
+        {isDev ? (
+          <motion.div
+            key="dev-about"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <TerminalAbout />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="recruiter-about"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Top row: bio */}
+            <div className="mb-10">
               <AnimatePresence mode="wait">
                 <motion.p
                   key={mode + '-bio'}
@@ -35,15 +47,13 @@ export default function About() {
                   {bio}
                 </motion.p>
               </AnimatePresence>
-            </motion.div>
-          </div>
+            </div>
 
-          {/* Stats pills */}
-          <motion.div variants={fadeInUp} custom={1}>
+            {/* Stats pills */}
             <RecruiterStatPills />
           </motion.div>
-        </>
-      )}
+        )}
+      </AnimatePresence>
     </Section>
   )
 }
