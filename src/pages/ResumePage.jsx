@@ -41,16 +41,29 @@ export default function ResumePage() {
           {isRecruiter ? 'Sai Akilesh Venigalla — Resume' : 'resume.tsx'}
         </span>
 
-        <motion.a
-          href={`${import.meta.env.BASE_URL}resume.pdf`}
-          download="Resume_Venigalla.pdf"
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold text-white ${theme.accentBg} ${theme.accentHover} transition-colors ${theme.font}`}
-        >
-          <FiDownload size={13} />
-          {isRecruiter ? 'Download PDF' : 'download'}
-        </motion.a>
+        <div className="flex items-center gap-2">
+          <motion.a
+            href={`${import.meta.env.BASE_URL}resume.pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold ${theme.accent} border ${theme.border} transition-colors ${theme.font}`}
+          >
+            <FiExternalLink size={13} />
+            {isRecruiter ? 'View PDF' : 'view'}
+          </motion.a>
+          <motion.a
+            href={`${import.meta.env.BASE_URL}resume.pdf`}
+            download="Resume_Venigalla.pdf"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold text-white ${theme.accentBg} ${theme.accentHover} transition-colors ${theme.font}`}
+          >
+            <FiDownload size={13} />
+            {isRecruiter ? 'Download PDF' : 'download'}
+          </motion.a>
+        </div>
       </div>
 
       {/* ── Scrollable area ── */}
