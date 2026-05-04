@@ -191,14 +191,17 @@ function ResumeSection({ title, accentColor, children }) {
   )
 }
 
-// ── Bold-number highlighting ── renders numbers/percentages bold inside bullets
+// ── Bold highlighting ──
+// • **text** → bold + accent color (manual, controlled from resume.js)
 function BulletText({ text, accentColor }) {
-  const parts = text.split(/(\d+[\w%+x/]*(?:\s*(?:hrs?|mins?|seconds?|M\+|K\+|x|\+|%|DAU))?)/g)
+  const parts = text.split(/(\*\*[^*]+\*\*)/g)
   return (
     <>
       {parts.map((part, i) =>
-        /^\d/.test(part) ? (
-          <strong key={i} className="font-bold text-gray-900">{part}</strong>
+        part.startsWith('**') && part.endsWith('**') ? (
+          <strong key={i} className="font-bold" style={{ color: accentColor }}>
+            {part.slice(2, -2)}
+          </strong>
         ) : (
           <span key={i}>{part}</span>
         )
