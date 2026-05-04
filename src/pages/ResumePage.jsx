@@ -199,7 +199,7 @@ function BulletText({ text, accentColor }) {
     <>
       {parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**') ? (
-          <strong key={i} className="font-bold" style={{ color: accentColor }}>
+          <strong key={i} className="font-bold text-gray-900">
             {part.slice(2, -2)}
           </strong>
         ) : (
