@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import ParticleField from './components/ParticleField'
 import Hero from './sections/Hero'
 import About from './sections/About'
+import CluelessPitch from './sections/CluelessPitch'
 import Experience from './sections/Experience'
 import Projects from './sections/Projects'
 import Education from './sections/Education'
@@ -25,6 +26,7 @@ function AppContent() {
       <main className="relative z-10">
         <Hero />
         <About />
+        <CluelessPitch />
         <Experience />
         <Projects />
         <Education />
