@@ -2,11 +2,13 @@
 import { GoogleGenAI } from '@google/genai'
 
 // Model IDs are env-overridable so you're never locked to a string that shifts.
-// Defaults are stable, known-good IDs; set LLM_PITCH_MODEL / LLM_CHAT_MODEL to
-// move to a newer generation (e.g. a gemini-3 model) without a code change.
+// The "-latest" aliases auto-track the current generation (avoids "model no
+// longer available" breakage). Defaults are flash-tier so they work on the
+// free API tier; if you enable billing, set LLM_PITCH_MODEL=gemini-pro-latest
+// for a stronger pitch.
 const MODELS = {
-  pitch: process.env.LLM_PITCH_MODEL || 'gemini-2.5-pro',
-  chat: process.env.LLM_CHAT_MODEL || 'gemini-2.5-flash',
+  pitch: process.env.LLM_PITCH_MODEL || 'gemini-flash-latest',
+  chat: process.env.LLM_CHAT_MODEL || 'gemini-flash-lite-latest',
 }
 
 function client() {
