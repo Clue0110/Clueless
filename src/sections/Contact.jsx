@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
+import ContactForm from '../components/ContactForm'
 import { personal } from '../data/content'
 import { fadeInUp } from '../utils/animations'
 import { FiGithub, FiLinkedin, FiMail, FiCopy, FiCheck, FiFileText } from 'react-icons/fi'
@@ -50,7 +51,10 @@ export default function Contact() {
           </motion.p>
         </AnimatePresence>
 
-        {/* Email copy button */}
+        {/* Contact form — sends email via /api/contact */}
+        <ContactForm />
+
+        {/* Email copy button (fallback / direct) */}
         <motion.button
           onClick={copyEmail}
           whileHover={{ scale: 1.03 }}
