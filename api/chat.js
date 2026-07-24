@@ -64,7 +64,10 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('[chat] failed:', err)
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Clueless got tongue-tied. Try again.' })
+      res.status(500).json({
+        error: 'Clueless got tongue-tied. Try again.',
+        detail: String(err?.message || err).slice(0, 300), // dev diagnostic; remove before production
+      })
     } else {
       res.end()
     }

@@ -119,6 +119,9 @@ export default async function handler(req, res) {
     res.status(200).json(pitch)
   } catch (err) {
     console.error('[pitch] generation failed:', err)
-    res.status(500).json({ error: 'Clueless got stuck generating the pitch. Give it another try.' })
+    res.status(500).json({
+      error: 'Clueless got stuck generating the pitch. Give it another try.',
+      detail: String(err?.message || err).slice(0, 300), // dev diagnostic; remove before production
+    })
   }
 }

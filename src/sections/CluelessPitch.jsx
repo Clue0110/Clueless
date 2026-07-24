@@ -61,7 +61,7 @@ export default function CluelessPitch() {
         body: JSON.stringify({ jobDescription: jd, mode }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Something went wrong.')
+      if (!res.ok) throw new Error(data.detail ? `${data.error} — ${data.detail}` : data.error || 'Something went wrong.')
       setPitch(data)
       setPlaying(true)
       setBeat(0)

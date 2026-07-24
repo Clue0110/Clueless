@@ -56,7 +56,7 @@ export default function CluelessChat() {
       })
       if (!res.ok || !res.body) {
         const e = await res.json().catch(() => ({}))
-        throw new Error(e.error || 'Something went wrong.')
+        throw new Error(e.detail ? `${e.error} — ${e.detail}` : e.error || 'Something went wrong.')
       }
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
