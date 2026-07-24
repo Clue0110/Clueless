@@ -2,7 +2,7 @@
 // pitch (grounded strictly in the portfolio knowledge base) plus a walkthrough
 // script that the frontend animates.
 import { getProvider } from './_llm/index.js'
-import { buildKnowledgeBase, RESUME_VERSIONS } from './_kb.js'
+import { buildKnowledgeBase, RESUME_VERSIONS, voiceFor } from './_kb.js'
 import { rateLimit } from './_ratelimit.js'
 
 // Strict-compatible schema (additionalProperties:false + required everywhere)
@@ -66,7 +66,7 @@ const PITCH_SCHEMA = {
   additionalProperties: false,
 }
 
-function buildSystemPrompt(kb, isDev) {
+function buildSystemPrompt(kb, mode) {
   return `You are "Clueless", the friendly, quietly-confident digital-pet mascot on Sai Akilesh Venigalla's portfolio site. Given a job description, you make the case for why Sai is a great fit — using ONLY the facts in the knowledge base below.
 
 HARD RULES:
@@ -74,9 +74,7 @@ HARD RULES:
 - Select and re-angle the MOST relevant real experience toward THIS specific job. Don't dump everything.
 - Prefer concrete metrics that appear in the knowledge base.
 
-VOICE: ${isDev
-    ? 'casual and first-person-ish, playful but sharp — like a witty dev friend hyping up a buddy.'
-    : 'polished, warm, confident, and professional.'}
+VOICE: ${voiceFor(mode)}
 
 OUTPUT (enforced by the response schema):
 - matchSummary: an honest score 0-100, a short verdict label, and a one-line hook.
@@ -96,7 +94,7 @@ export default async function handler(req, res) {
     return
   }
 
-  const { success } = await rateLimit(req)
+  const { success } = await rateLimit(req, { name: 'pitch', max: 10, window: '1 d' })
   if (!success) {
     res.status(429).json({ error: "Clueless needs a nap — you've hit today's limit. Try again later." })
     return
@@ -109,7 +107,7 @@ export default async function handler(req, res) {
   }
 
   const kb = buildKnowledgeBase()
-  const system = buildSystemPrompt(kb, mode === 'developer')
+  const system = buildSystemPrompt(kb, mode)
   const prompt = `JOB DESCRIPTION:\n${jobDescription.slice(0, 8000)}`
 
   try {

@@ -2,15 +2,22 @@ import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 
-// Types out `text` character by character, then calls onDone(). Used to drive
-// the walkthrough's beat-to-beat pacing (advance once the line finishes typing).
-export default function SpeechBubble({ text, onDone, speed = 20 }) {
+// Two modes:
+//  - typewriter (default): types `text` out char-by-char, calls onDone() when finished.
+//    Used by the walkthrough to pace beat-to-beat.
+//  - raw: renders `text` directly (for streaming chat, where the parent updates
+//    `text` as chunks arrive). onDone is ignored.
+export default function SpeechBubble({ text, onDone, speed = 20, raw = false, caret = true, tail = true }) {
   const { theme } = useMode()
-  const [shown, setShown] = useState('')
+  const [shown, setShown] = useState(raw ? text : '')
   const onDoneRef = useRef(onDone)
   onDoneRef.current = onDone
 
   useEffect(() => {
+    if (raw) {
+      setShown(text)
+      return
+    }
     setShown('')
     if (!text) return
     let i = 0
@@ -23,20 +30,21 @@ export default function SpeechBubble({ text, onDone, speed = 20 }) {
       }
     }, speed)
     return () => clearInterval(id)
-  }, [text, speed])
+  }, [text, speed, raw])
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className={`relative max-w-xs rounded-2xl border px-4 py-3 text-sm ${theme.card} ${theme.border} ${theme.text}`}
+      className={`relative rounded-2xl border px-4 py-3 text-sm ${theme.card} ${theme.border} ${theme.text}`}
     >
       {shown}
-      <span className={`ml-0.5 inline-block w-1.5 animate-pulse ${theme.accent}`}>▍</span>
-      {/* little tail pointing down toward Clueless */}
-      <span
-        className={`absolute -bottom-2 left-8 h-4 w-4 rotate-45 border-b border-r ${theme.card} ${theme.border}`}
-      />
+      {caret && <span className={`ml-0.5 inline-block w-1.5 animate-pulse ${theme.accent}`}>▍</span>}
+      {tail && (
+        <span
+          className={`absolute -bottom-2 left-8 h-4 w-4 rotate-45 border-b border-r ${theme.card} ${theme.border}`}
+        />
+      )}
     </motion.div>
   )
 }

@@ -51,3 +51,12 @@ export function buildKnowledgeBase() {
 
 // The versioned resume PDFs available for the pet to recommend (public/resume/vN).
 export const RESUME_VERSIONS = ['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9']
+
+// Voice/persona per site mode — applied in each endpoint's system prompt.
+export function voiceFor(mode) {
+  if (mode === 'developer')
+    return 'casual and first-person-ish, playful but sharp — like a witty dev friend hyping up a buddy.'
+  if (mode === 'clueless')
+    return 'fully in character as Clueless the digital pet — extra playful, a little goofy, endearing, talking about Sai like his proud companion. Stay accurate and grounded; just turn the charm up.'
+  return 'polished, warm, confident, and professional.'
+}

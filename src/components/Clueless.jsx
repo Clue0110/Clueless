@@ -21,7 +21,7 @@ const ANIM = {
   celebrate: { y: [0, -10, 0], scale: [1, 1.08, 1], transition: { duration: 0.5, repeat: Infinity, ease: 'easeOut' } },
 }
 
-export default function Clueless({ pose = 'idle', size = 34 }) {
+export default function Clueless({ pose = 'idle', size = 34, label = true }) {
   const { theme } = useMode()
   return (
     <div className="flex flex-col items-center select-none" aria-hidden="true">
@@ -32,9 +32,9 @@ export default function Clueless({ pose = 'idle', size = 34 }) {
       >
         {FACES[pose] || FACES.idle}
       </motion.div>
-      <span className={`mt-1 font-mono text-[10px] tracking-widest uppercase ${theme.muted}`}>
-        clueless
-      </span>
+      {label && (
+        <span className={`mt-1 font-mono text-[10px] tracking-widest uppercase ${theme.muted}`}>clueless</span>
+      )}
     </div>
   )
 }

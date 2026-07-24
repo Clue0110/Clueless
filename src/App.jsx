@@ -5,20 +5,25 @@ import ParticleField from './components/ParticleField'
 import Hero from './sections/Hero'
 import About from './sections/About'
 import CluelessPitch from './sections/CluelessPitch'
+import CluelessChat from './components/CluelessChat'
 import Experience from './sections/Experience'
 import Projects from './sections/Projects'
 import Education from './sections/Education'
 import Contact from './sections/Contact'
 import ResumePage from './pages/ResumePage'
 
+const MODE_CLASS = {
+  recruiter: 'mode-recruiter',
+  developer: 'mode-dev',
+  clueless: 'mode-clueless',
+}
+
 function AppContent() {
-  const { isRecruiter, theme, mode, showResume } = useMode()
+  const { theme, mode, showResume } = useMode()
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-700 ${theme.bg} ${
-        isRecruiter ? 'mode-recruiter' : 'mode-dev'
-      } grain-overlay dot-grid`}
+      className={`min-h-screen transition-colors duration-700 ${theme.bg} ${MODE_CLASS[mode]} grain-overlay dot-grid`}
     >
       <ParticleField />
       <Navbar />
@@ -36,6 +41,8 @@ function AppContent() {
       <AnimatePresence>
         {showResume && <ResumePage />}
       </AnimatePresence>
+
+      <CluelessChat />
     </div>
   )
 }
