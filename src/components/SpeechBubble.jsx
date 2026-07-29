@@ -36,7 +36,7 @@ export default function SpeechBubble({ text, onDone, speed = 20, raw = false, ca
     <motion.div
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className={`relative rounded-2xl border px-4 py-3 text-sm ${theme.card} ${theme.border} ${theme.text}`}
+      className={`relative rounded-2xl border px-4 py-3 text-sm ${theme.card} ${theme.border} ${theme.text} ${theme.font}`}
     >
       {shown}
       {caret && <span className={`ml-0.5 inline-block w-1.5 animate-pulse ${theme.accent}`}>▍</span>}

@@ -14,7 +14,7 @@ const ANCHOR_TITLES = {
 }
 
 export default function CluelessPitch() {
-  const { theme, mode, isDev } = useMode()
+  const { theme, mode } = useMode()
 
   const [jd, setJd] = useState('')
   const [loading, setLoading] = useState(false)
@@ -79,7 +79,7 @@ export default function CluelessPitch() {
     setError(null)
   }
 
-  const heading = isDev ? '> clueless_pitch' : 'Let Clueless Make the Case'
+  const heading = 'the job-match magic ✨'
 
   return (
     <section id="pitch" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
@@ -92,9 +92,8 @@ export default function CluelessPitch() {
         {heading}
       </motion.h2>
       <p className={`mt-3 max-w-2xl ${theme.muted} ${theme.font}`}>
-        {isDev
-          ? 'paste a job description. my pet reads it and walks you through why i fit — using only real stuff from my actual experience.'
-          : 'Paste a job description and Clueless will build a tailored case and walk you through exactly why I match — grounded only in my real experience.'}
+        paste a job description below. i'll read it very carefully (i'm a cat, i read everything carefully),
+        score the fit honestly, and walk you through why sai matches — using only his real experience.
       </p>
 
       {/* Input */}
@@ -118,7 +117,7 @@ export default function CluelessPitch() {
                   disabled={loading || jd.trim().length < 20}
                   className={`rounded-xl px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
                 >
-                  {loading ? 'Clueless is reading…' : isDev ? 'make my case' : 'Make the case'}
+                  {loading ? 'clueless is reading…' : 'make the case!'}
                 </button>
                 {error && <span className="text-sm text-red-400">{error}</span>}
               </div>
@@ -156,7 +155,7 @@ export default function CluelessPitch() {
                   {ended && (
                     <SpeechBubble
                       key="end"
-                      text={isDev ? "that's my pitch. grab the resume 👇" : "That's my case — here's the resume to take with you."}
+                      text={"that's my case! grab sai's resume to take with you 👇"}
                     />
                   )}
                 </AnimatePresence>

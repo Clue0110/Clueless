@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { ModeProvider, useMode } from './context/ModeContext'
 import Navbar from './components/Navbar'
 import ParticleField from './components/ParticleField'
 import Hero from './sections/Hero'
 import About from './sections/About'
-import CluelessPitch from './sections/CluelessPitch'
+import CluelessWorld from './sections/CluelessWorld'
 import CluelessChat from './components/CluelessChat'
 import Experience from './sections/Experience'
 import Projects from './sections/Projects'
@@ -19,7 +19,7 @@ const MODE_CLASS = {
 }
 
 function AppContent() {
-  const { theme, mode, showResume } = useMode()
+  const { theme, mode, isClueless, showResume } = useMode()
 
   return (
     <div
@@ -29,20 +29,27 @@ function AppContent() {
       <Navbar />
 
       <main className="relative z-10">
-        <Hero />
-        <About />
-        <CluelessPitch />
-        <Experience />
-        <Projects />
-        <Education />
-        <Contact />
+        {isClueless ? (
+          // Clueless mode replaces the whole site with the cat-guided tour
+          // (which ends in the JD-match pitch — exclusive to this mode).
+          <CluelessWorld key={mode} />
+        ) : (
+          <>
+            <Hero />
+            <About />
+            <Experience />
+            <Projects />
+            <Education />
+            <Contact />
+          </>
+        )}
       </main>
 
       <AnimatePresence>
         {showResume && <ResumePage />}
       </AnimatePresence>
 
-      <CluelessChat />
+      {!isClueless && <CluelessChat />}
     </div>
   )
 }

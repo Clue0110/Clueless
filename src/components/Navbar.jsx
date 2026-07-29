@@ -14,7 +14,7 @@ const NAV_ITEMS = [
 const SECTION_IDS = ['hero', 'about', 'experience', 'projects', 'education', 'contact']
 
 export default function Navbar() {
-  const { isRecruiter, theme } = useMode()
+  const { isRecruiter, isClueless, theme } = useMode()
   const [activeSection, setActiveSection] = useState('hero')
   const [navVisible, setNavVisible] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -57,8 +57,8 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [lastY])
 
-  const accentBg = isRecruiter ? 'rgba(124,58,237,0.15)' : 'rgba(34,197,94,0.15)'
-  const accentDot = isRecruiter ? '#7c3aed' : '#22c55e'
+  const accentBg = isRecruiter ? 'rgba(124,58,237,0.15)' : isClueless ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)'
+  const accentDot = isRecruiter ? '#7c3aed' : isClueless ? '#f59e0b' : '#22c55e'
 
   return (
     <motion.div
@@ -85,8 +85,8 @@ export default function Navbar() {
           {'clueless'}
         </motion.a>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-1">
+        {/* Desktop links (hidden in clueless mode — the cat drives navigation) */}
+        <div className={`hidden ${isClueless ? '' : 'md:flex'} items-center gap-1`}>
           {NAV_ITEMS.map((item) => {
             const sectionId = item.href.replace('#', '')
             const isActive = activeSection === sectionId
@@ -127,7 +127,7 @@ export default function Navbar() {
           <ModeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className={`md:hidden ${theme.muted} p-1.5 rounded-full hover:bg-white/5 transition-colors`}
+            className={`${isClueless ? 'hidden' : 'md:hidden'} ${theme.muted} p-1.5 rounded-full hover:bg-white/5 transition-colors`}
             aria-label="Toggle menu"
           >
             <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -142,7 +142,7 @@ export default function Navbar() {
 
       {/* Mobile dropdown */}
       <AnimatePresence>
-        {mobileOpen && (
+        {mobileOpen && !isClueless && (
           <motion.div
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
