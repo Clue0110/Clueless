@@ -31,7 +31,7 @@ export default function CluelessPitch() {
   const touring = pitch && beat >= 0 && beat < beats.length
   const ended = pitch && beat >= beats.length
   const current = touring ? beats[beat] : null
-  const pose = loading ? 'read' : ended ? 'celebrate' : current?.pose || 'idle'
+  const pose = loading ? 'read' : ended ? 'celebrate' : current?.pose || 'happy'
 
   // Scroll the active section into view as the tour advances.
   useEffect(() => {
@@ -101,7 +101,7 @@ export default function CluelessPitch() {
         <div className={`mt-8 rounded-2xl border p-5 ${theme.card} ${theme.border}`}>
           <div className="flex items-start gap-4">
             <div className="shrink-0 pt-1">
-              <Clueless pose={loading ? 'read' : 'idle'} />
+              <Clueless pose={loading ? 'read' : 'happy'} />
             </div>
             <div className="flex-1">
               <textarea

@@ -148,7 +148,7 @@ export default function CluelessChat() {
         onClick={() => setOpen((o) => !o)}
         className={`ml-auto flex items-center gap-2 rounded-full border px-4 py-2 shadow-lg ${theme.card} ${theme.border} hover:opacity-90`}
       >
-        <Clueless pose={busy ? 'read' : open ? 'idle' : 'wave'} size={22} label={false} />
+        <Clueless pose={busy ? 'read' : open ? 'happy' : 'wave'} size={22} label={false} />
         {!open && <span className={`text-sm font-medium ${theme.text}`}>{LAUNCH_LABEL[mode]}</span>}
       </button>
     </div>

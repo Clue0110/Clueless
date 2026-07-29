@@ -58,15 +58,17 @@ export default function CluelessWorld() {
   }
   const back = () => step > 0 && goToStep(step - 1)
 
+  // The cat should never be caught looking bored: every resting state here is a
+  // smiling one, and 'idle' is only the fallback.
   const pose = walking
     ? 'walk'
     : stage === 'welcome'
       ? welcomeDone
-        ? 'idle'
+        ? 'happy'
         : 'wave'
       : stage === 'invite'
         ? 'celebrate'
-        : station?.pose || 'idle'
+        : station?.pose || 'happy'
 
   // ── Pitch stage is a normal scrollable page ──────────────────────────
   if (stage === 'pitch') {

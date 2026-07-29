@@ -47,7 +47,7 @@ export const TOUR = [
   {
     id: 'citrix',
     title: 'the citrix era',
-    pose: 'read',
+    pose: 'curious',
     say: 'before that: 3 years at citrix making the internet safer. he once found servers downloading security files with NO auth and fixed it in C. i was so proud.',
     card: {
       type: 'facts',
@@ -63,7 +63,7 @@ export const TOUR = [
   {
     id: 'research',
     title: 'the science-cat years',
-    pose: 'read',
+    pose: 'wink',
     say: 'he also did research at samsung — teaching AIs to erase things from photos and recognizing people by how they WALK. suspiciously cat-like skills.',
     card: {
       type: 'facts',
@@ -95,7 +95,7 @@ export const TOUR = [
   {
     id: 'education',
     title: 'certified smart human',
-    pose: 'idle',
+    pose: 'happy',
     say: 'the paperwork checks out too — 3.9 GPA at NYU while TA-ing 250 students, summa cum laude before that. he still asks ME for advice though.',
     card: {
       type: 'education',

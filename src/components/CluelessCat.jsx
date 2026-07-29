@@ -1,280 +1,56 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { PALETTE, POSES, COLS, ROWS } from './cluelessSprites'
 
-// Pixel-art cat sprite. Each pose is a set of hand-drawn 24×16 pixel frames
-// cycled on a timer (classic sprite animation), rendered as crisp SVG rects.
-// Poses: idle | walk | read | point | wave | celebrate | sleep
+// Animated pixel-art cat. The art itself lives in cluelessSprites.js; this just
+// cycles a pose's frames on a timer and adds the whole-body motion (bob, hop,
+// lean) that the frames don't cover.
+//
+// Poses: idle | happy | walk | wave | point | read | celebrate | wink | curious
+//        | love | sleep
 // `facing`: 'right' (default) or 'left' — flips the sprite horizontally.
 
-const PALETTE = {
-  X: '#54350d', // outline
-  B: '#f4a933', // orange fur
-  D: '#c97b16', // dark fur (stripes + tail)
-  W: '#fdeed3', // cream (muzzle, paws)
-  P: '#f2a0b5', // pink (inner ear, blush)
-  E: '#241511', // eyes
-  N: '#e8618c', // nose
-}
-
-// ── Frames (24 cols × 16 rows, '.' = transparent) ──────────────────────────
-
-const SIT_A = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBBBBDBBBBDBBBBX....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBEEBX....',
-  '....XBEEBBWWWWBBEEBX....',
-  '....XBPBBWWNNWWBBPBX....',
-  '.....XBBBWWWWWWBBBX.....',
-  '.....XBBBBBBBBBBBBX...DD',
-  '....XBBDBBBBBBDBBBBX..DD',
-  '....XBBDBBBBBBDBBBBX.DD.',
-  '....XBWWBBBBBBBBWWBX.DD.',
-  '....XBWWBBBBBBBBWWBXDD..',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-// Tail swished one step
-const SIT_B = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBBBBDBBBBDBBBBX....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBEEBX....',
-  '....XBEEBBWWWWBBEEBX....',
-  '....XBPBBWWNNWWBBPBX....',
-  '.....XBBBWWWWWWBBBX...DD',
-  '.....XBBBBBBBBBBBBX..DD.',
-  '....XBBDBBBBBBDBBBBX.DD.',
-  '....XBBDBBBBBBDBBBBXDD..',
-  '....XBWWBBBBBBBBWWBXDD..',
-  '....XBWWBBBBBBBBWWBXD...',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-// Eyes closed (also used as the calm "reading" face)
-const SIT_BLINK = SIT_A.map((row, i) =>
-  i === 6 ? '....XBBBBBBBBBBBBBBX....' : row,
-)
-
-// Right arm extended sideways, tail tucked to the left
-const POINT = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBBBBDBBBBDBBBBX....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBEEBX....',
-  '....XBEEBBWWWWBBEEBX....',
-  '....XBPBBWWNNWWBBPBX....',
-  '.....XBBBWWWWWWBBBX.....',
-  '.....XBBBBBBBBBBBBBBBWW.',
-  '....XBBDBBBBBBDBBBBX....',
-  '....XBBDBBBBBBDBBBBX....',
-  '..DDXBWWBBBBBBBBWWBX....',
-  '.DD.XBWWBBBBBBBBWWBX....',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-// Right arm raised, two frames of waving
-const WAVE_1 = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBBBBDBBBBDBBBBX....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBEEBXWW..',
-  '....XBEEBBWWWWBBEEBXBB..',
-  '....XBPBBWWNNWWBBPBXBB..',
-  '.....XBBBWWWWWWBBBXBB...',
-  '.....XBBBBBBBBBBBBX.....',
-  '....XBBDBBBBBBDBBBBX....',
-  '....XBBDBBBBBBDBBBBX....',
-  '..DDXBWWBBBBBBBBWWBX....',
-  '.DD.XBWWBBBBBBBBWWBX....',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-const WAVE_2 = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBBBBDBBBBDBBBBX....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBEEBX....',
-  '....XBEEBBWWWWBBEEBX.WW.',
-  '....XBPBBWWNNWWBBPBXBB..',
-  '.....XBBBWWWWWWBBBXBB...',
-  '.....XBBBBBBBBBBBBX.....',
-  '....XBBDBBBBBBDBBBBX....',
-  '....XBBDBBBBBBDBBBBX....',
-  '..DDXBWWBBBBBBBBWWBX....',
-  '.DD.XBWWBBBBBBBBWWBX....',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-// Both paws up, open mouth — two frames
-const CHEER_1 = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '....XBBBBDBBBBDBBBBX....',
-  '....XBBBBBBBBBBBBBBX....',
-  '..WWXBEEBBBBBBBBEEBXWW..',
-  '..BBXBEEBBWWWWBBEEBXBB..',
-  '..BBXBPBBWWNNWWBBPBXBB..',
-  '...BBXBBBWWEEWWBBBXBB...',
-  '.....XBBBBBBBBBBBBX...DD',
-  '....XBBDBBBBBBDBBBBX..DD',
-  '....XBBDBBBBBBDBBBBX.DD.',
-  '....XBWWBBBBBBBBWWBX.DD.',
-  '....XBWWBBBBBBBBWWBXDD..',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-const CHEER_2 = [
-  '......XX........XX......',
-  '.....XBBX......XBBX.....',
-  '.....XBPBX....XBPBX.....',
-  '....XBBBBBBBBBBBBBBX....',
-  '.WW.XBBBBDBBBBDBBBBXWW..',
-  '..BBXBBBBBBBBBBBBBBXBB..',
-  '..BBXBEEBBBBBBBBEEBXBB..',
-  '...BXBEEBBWWWWBBEEBXB...',
-  '....XBPBBWWNNWWBBPBX....',
-  '.....XBBBWWEEWWBBBX.....',
-  '.....XBBBBBBBBBBBBX..DD.',
-  '....XBBDBBBBBBDBBBBX.DD.',
-  '....XBBDBBBBBBDBBBBXDD..',
-  '....XBWWBBBBBBBBWWBXDD..',
-  '....XBWWBBBBBBBBWWBXD...',
-  '.....XXXXXXXXXXXXXX.....',
-]
-
-// Side view, trotting right — legs alternate between frames
-const WALK_1 = [
-  '........................',
-  '........................',
-  '.......XX....XX.........',
-  '......XBBX..XBBX........',
-  '......XBPBXXBPBX........',
-  '.....XBBBBBBBBBBX.......',
-  '.....XBBDBBDBBBBX.......',
-  'DD...XBBBBBBBEEBX.......',
-  '.DD..XBBBBBBBBBWWX......',
-  '..DDXBBBBBBBBBBBBX......',
-  '..XXBBDBBBDBBBBBBX......',
-  '..XBBBBBBBBBBBBBBX......',
-  '..XBBBBBBBBBBBBBBX......',
-  '...XBBX......XBBX.......',
-  '...XWWX......XWWX.......',
-  '........................',
-]
-
-const WALK_2 = [
-  '........................',
-  '........................',
-  '.......XX....XX.........',
-  '......XBBX..XBBX........',
-  '......XBPBXXBPBX........',
-  '.....XBBBBBBBBBBX.......',
-  '.....XBBDBBDBBBBX.......',
-  '.DD..XBBBBBBBEEBX.......',
-  '..DD.XBBBBBBBBBWWX......',
-  '...DXBBBBBBBBBBBBX......',
-  '..XXBBDBBBDBBBBBBX......',
-  '..XBBBBBBBBBBBBBBX......',
-  '..XBBBBBBBBBBBBBBX......',
-  '.....XBBX......XBBX.....',
-  '.....XWWX......XWWX.....',
-  '........................',
-]
-
-// Curled up on the floor, eyes shut — tail flicks between frames
-const SLEEP_1 = [
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '....XX..XX..............',
-  '...XBBXXBBX.............',
-  '...XBPBBPBXXXXXXX.......',
-  '..XBBBBBBBBBBBBBBXX.....',
-  '..XBBBBBBDBBBDBBBBBX....',
-  '..XBEEBBBBBBBBBBBBBX....',
-  '..XBBWWBBBBBBBBBBDDX....',
-  '...XBBBBBBBBBBBDDDX.....',
-  '....XXXXXXXXXXXXXX......',
-]
-
-const SLEEP_2 = [
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '........................',
-  '....XX..XX..............',
-  '...XBBXXBBX.............',
-  '...XBPBBPBXXXXXXX.......',
-  '..XBBBBBBBBBBBBBBXX.....',
-  '..XBBBBBBDBBBDBBBBBX....',
-  '..XBEEBBBBBBBBBBBBBX....',
-  '..XBBWWBBBBBBBBBBBDX....',
-  '...XBBBBBBBBBBBDDDX.....',
-  '....XXXXXXXXXXXXXX......',
-]
-
-// Frame sequence + speed per pose
-const POSES = {
-  idle: { frames: [SIT_A, SIT_A, SIT_B, SIT_B, SIT_A, SIT_BLINK], ms: 420 },
-  walk: { frames: [WALK_1, WALK_2], ms: 170 },
-  read: { frames: [SIT_BLINK], ms: 0 },
-  point: { frames: [POINT], ms: 0 },
-  wave: { frames: [WAVE_1, WAVE_2], ms: 260 },
-  celebrate: { frames: [CHEER_1, CHEER_2], ms: 220 },
-  sleep: { frames: [SLEEP_1, SLEEP_1, SLEEP_2], ms: 900 },
-}
-
-// Container motion per pose (frames handle the details; this adds life)
+// Whole-body motion per pose. The frames carry the expression; this carries the
+// energy, so anything meant to feel welcoming gets a visible bounce.
 const BODY_ANIM = {
   idle: { y: [0, -1.5, 0], transition: { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } },
-  read: { y: [0, -1, 0], transition: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } },
+  happy: { y: [0, -5, 0], transition: { duration: 0.7, repeat: Infinity, ease: 'easeInOut' } },
+  walk: { y: [0, -2, 0], rotate: [-1.5, 1.5, -1.5], transition: { duration: 0.3, repeat: Infinity, ease: 'easeInOut' } },
+  wave: { y: [0, -3, 0], transition: { duration: 0.9, repeat: Infinity, ease: 'easeInOut' } },
   point: { x: [0, 2, 0], transition: { duration: 1.1, repeat: Infinity, ease: 'easeInOut' } },
-  wave: { y: 0 },
-  walk: { y: 0 },
+  read: { y: [0, -1, 0], transition: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } },
   celebrate: { y: [0, -12, 0], transition: { duration: 0.5, repeat: Infinity, ease: 'easeOut' } },
-  sleep: { y: 0 },
+  wink: { y: [0, -2, 0], transition: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } },
+  curious: { rotate: [-4, 4, -4], transition: { duration: 2.6, repeat: Infinity, ease: 'easeInOut' } },
+  love: { y: [0, -4, 0], scale: [1, 1.04, 1], transition: { duration: 0.9, repeat: Infinity, ease: 'easeInOut' } },
+  sleep: { y: 2, transition: { duration: 0.6 } },
 }
 
-const COLS = 24
-const ROWS = 16
+// Each frame's <rect> list is identical for the life of the page, so build it
+// once per frame rather than per render — the walk cycle ticks every 150ms.
+// Runs of the same colour collapse into one rect; the 0.02 overlap hides seams.
+const rectCache = new Map()
 
-function Frame({ rows }) {
-  const rects = useMemo(() => {
-    const out = []
-    rows.forEach((row, y) => {
-      for (let x = 0; x < row.length; x++) {
-        const c = row[x]
-        if (c !== '.') out.push(<rect key={`${x}-${y}`} x={x} y={y} width="1.04" height="1.04" fill={PALETTE[c] || PALETTE.B} />)
+function rectsFor(rows) {
+  const cached = rectCache.get(rows)
+  if (cached) return cached
+  const out = []
+  rows.forEach((row, y) => {
+    let x = 0
+    while (x < row.length) {
+      const ch = row[x]
+      if (ch === '.') {
+        x++
+        continue
       }
-    })
-    return out
-  }, [rows])
-  return <>{rects}</>
+      let w = 1
+      while (row[x + w] === ch) w++
+      out.push(<rect key={`${x}-${y}`} x={x} y={y} width={w + 0.02} height={1.02} fill={PALETTE[ch]} />)
+      x += w
+    }
+  })
+  rectCache.set(rows, out)
+  return out
 }
 
 export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right' }) {
@@ -288,8 +64,7 @@ export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right'
     return () => clearInterval(id)
   }, [pose]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const rows = frames[tick % frames.length]
-  const width = size * 2.6
+  const width = size * 2.3
   const height = width * (ROWS / COLS)
 
   return (
@@ -299,9 +74,9 @@ export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right'
         width={width}
         height={height}
         shapeRendering="crispEdges"
-        style={{ transform: facing === 'left' ? 'scaleX(-1)' : undefined, imageRendering: 'pixelated' }}
+        style={{ transform: facing === 'left' ? 'scaleX(-1)' : undefined, imageRendering: 'pixelated', overflow: 'visible' }}
       >
-        <Frame rows={rows} />
+        {rectsFor(frames[tick % frames.length])}
       </svg>
 
       {pose === 'sleep' && (
