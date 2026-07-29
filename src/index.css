@@ -113,6 +113,31 @@ body {
   background-size: 24px 24px;
 }
 
+/* ─── Dev Mode Fun ─── */
+/* RGB-shift glitch on hover — only activates under .mode-dev */
+.mode-dev .glitch-hover:hover {
+  animation: glitch-skew 0.35s steps(2, end) infinite;
+}
+
+@keyframes glitch-skew {
+  0%   { transform: translate(0);                       filter: none; }
+  25%  { transform: translate(-2px, 1px) skewX(-1.5deg); filter: hue-rotate(90deg); }
+  50%  { transform: translate(2px, -1px) skewX(1deg);    filter: hue-rotate(-60deg) saturate(2); }
+  75%  { transform: translate(-1px, 2px);                filter: none; }
+  100% { transform: translate(1px, -1px) skewX(-0.5deg); filter: hue-rotate(45deg); }
+}
+
+/* Tag / pill wiggle on hover — dev mode only */
+.mode-dev .dev-wiggle:hover {
+  animation: wiggle 0.4s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%      { transform: rotate(-6deg) scale(1.1); }
+  75%      { transform: rotate(6deg) scale(1.1); }
+}
+
 /* ─── Clueless Mode ─── */
 .mode-clueless ::-webkit-scrollbar-thumb {
   background: #f59e0b;

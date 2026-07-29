@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import { personal } from '../data/content'
@@ -8,8 +8,29 @@ import { FiGithub, FiLinkedin, FiMail, FiArrowDown, FiFileText } from 'react-ico
 
 const Beams = lazy(() => import('../components/Beams'))
 
+// Dev-mode easter egg: clicking the name bursts a little shower of dev debris.
+const DEV_EMOJIS = ['🚀', '🐛', '☕', '💾', '⚡', '{ }', '</>', 'sudo', '0x1F408']
+
 export default function Hero() {
   const { isRecruiter, theme, mode, setShowResume } = useMode()
+  const [bursts, setBursts] = useState([])
+
+  // Spawn a handful of floating emojis at the click point (dev mode only).
+  const burstEmojis = (e) => {
+    if (isRecruiter) return
+    const now = Date.now()
+    const items = Array.from({ length: 8 }, (_, i) => ({
+      id: `${now}-${i}`,
+      emoji: DEV_EMOJIS[Math.floor(Math.random() * DEV_EMOJIS.length)],
+      x: e.clientX,
+      y: e.clientY,
+      dx: (Math.random() - 0.5) * 160,
+      dy: -100 - Math.random() * 120,
+      rot: (Math.random() - 0.5) * 90,
+    }))
+    setBursts((b) => [...b, ...items])
+    setTimeout(() => setBursts((b) => b.filter((it) => !items.includes(it))), 1300)
+  }
 
   let tagline = isRecruiter ? personal.tagline.recruiter : personal.tagline.dev
 
@@ -95,8 +116,11 @@ export default function Hero() {
               </AnimatePresence>
             </motion.p>
 
-            {/* Name */}
-            <h1 className={`font-black tracking-tight mb-4 ${theme.text} ${theme.font} transition-all duration-500 leading-none`}>
+            {/* Name (glitches + bursts emojis on interaction in dev mode) */}
+            <h1
+              onClick={burstEmojis}
+              className={`font-black tracking-tight mb-4 glitch-hover ${!isRecruiter ? 'cursor-pointer select-none' : ''} ${theme.text} ${theme.font} transition-all duration-500 leading-none`}
+            >
               <div className="text-5xl md:text-6xl lg:text-7xl">
                 <AnimatedText text="Sai Akilesh" />
               </div>
@@ -175,6 +199,21 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      {/* Dev-mode emoji burst layer */}
+      <AnimatePresence>
+        {bursts.map((b) => (
+          <motion.span
+            key={b.id}
+            className={`fixed left-0 top-0 z-50 pointer-events-none font-mono text-xl font-bold ${theme.accent}`}
+            initial={{ x: b.x, y: b.y, opacity: 1, scale: 0.5 }}
+            animate={{ x: b.x + b.dx, y: b.y + b.dy, opacity: 0, scale: 1.4, rotate: b.rot }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+          >
+            {b.emoji}
+          </motion.span>
+        ))}
+      </AnimatePresence>
 
       {/* Scroll indicator */}
       <motion.div

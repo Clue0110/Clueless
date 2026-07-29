@@ -6,7 +6,7 @@ export default function Tag({ label }) {
   return (
     <motion.span
       whileHover={{ scale: 1.1 }}
-      className={`inline-block px-3 py-1 text-xs rounded-full border ${theme.tagBg} ${theme.tagText} ${theme.tagBorder} ${theme.font} transition-colors duration-500`}
+      className={`inline-block px-3 py-1 text-xs rounded-full border dev-wiggle ${theme.tagBg} ${theme.tagText} ${theme.tagBorder} ${theme.font} transition-colors duration-500`}
     >
       {label}
     </motion.span>
