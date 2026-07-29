@@ -8,7 +8,7 @@ export default function Clueless({ pose = 'idle', size = 34, label = true, facin
   return (
     <div className="flex flex-col items-center select-none" aria-hidden="true">
       <div className={theme.accent}>
-        <CluelessCat pose={pose} size={size * 1.9} facing={facing} />
+        <CluelessCat pose={pose} size={size} facing={facing} />
       </div>
       {label && (
         <span className={`mt-1 font-mono text-[10px] tracking-widest uppercase ${theme.muted}`}>clueless</span>
