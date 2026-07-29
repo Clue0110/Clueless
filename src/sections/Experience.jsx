@@ -37,7 +37,7 @@ function ExperienceCard({ job, index }) {
       />
 
       {/* Card */}
-      <div className={`${theme.card} border ${theme.border} rounded-2xl p-6 glass glass-hover transition-all duration-500`}>
+      <div className={`${theme.card} border ${theme.border} rounded-2xl p-4 sm:p-6 glass glass-hover transition-all duration-500`}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <div>
@@ -58,7 +58,7 @@ function ExperienceCard({ job, index }) {
         {isMobile && (
           <button
             onClick={() => setMobileExpanded(e => !e)}
-            className={`w-full flex items-center justify-between text-xs ${theme.accent} ${theme.font} py-1 mb-1`}
+            className={`w-full flex min-h-11 items-center justify-between text-sm ${theme.accent} ${theme.font} py-2 mb-1`}
           >
             <span>
               {mobileExpanded
@@ -70,7 +70,7 @@ function ExperienceCard({ job, index }) {
               animate={{ rotate: mobileExpanded ? 180 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <FiChevronDown size={14} />
+              <FiChevronDown size={16} />
             </motion.span>
           </button>
         )}

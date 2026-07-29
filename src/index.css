@@ -11,10 +11,39 @@
 
 html {
   scroll-behavior: smooth;
+  /* stop iOS inflating body text when the phone turns landscape */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   overflow-x: hidden;
+  /* the grey flash on every tap reads as a rendering bug on a dark theme */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Touch devices ─── */
+/* Hover-only affordances never fire on a phone, and a stuck :hover state after
+   a tap looks broken — so scope the decorative ones to real pointers. */
+@media (hover: none) {
+  .glitch-hover:hover,
+  .dev-wiggle:hover {
+    animation: none;
+  }
+}
+
+/* Respect the OS "reduce motion" setting — this site leans hard on animation. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ─── Custom Scrollbar ─── */

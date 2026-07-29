@@ -80,7 +80,7 @@ export default function Navbar() {
         <motion.a
           href="#hero"
           whileHover={{ scale: 1.05 }}
-          className={`text-base font-bold ${theme.accent} whitespace-nowrap transition-colors duration-500`}
+          className={`flex min-h-11 items-center text-base font-bold ${theme.accent} whitespace-nowrap transition-colors duration-500`}
         >
           {'clueless'}
         </motion.a>
@@ -127,10 +127,10 @@ export default function Navbar() {
           <ModeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className={`${isClueless ? 'hidden' : 'md:hidden'} ${theme.muted} p-1.5 rounded-full hover:bg-white/5 transition-colors`}
+            className={`${isClueless ? 'hidden' : 'md:hidden'} ${theme.muted} flex h-11 w-11 items-center justify-center rounded-full hover:bg-white/5 transition-colors`}
             aria-label="Toggle menu"
           >
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               {mobileOpen
                 ? <><line x1="4" y1="4" x2="16" y2="16" /><line x1="16" y1="4" x2="4" y2="16" /></>
                 : <><line x1="3" y1="6" x2="17" y2="6" /><line x1="3" y1="11" x2="17" y2="11" /><line x1="3" y1="16" x2="17" y2="16" /></>
@@ -148,7 +148,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.97 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-[72px] left-4 right-4 rounded-2xl border border-white/10 overflow-hidden"
+            className="absolute top-full mt-2 left-4 right-4 rounded-2xl border border-white/10 overflow-hidden"
             style={{
               backgroundColor: 'rgba(10,10,18,0.95)',
               backdropFilter: 'blur(20px)',
@@ -164,7 +164,7 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-colors duration-200 ${
+                    className={`flex min-h-11 items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors duration-200 ${
                       isActive
                         ? isRecruiter
                           ? 'bg-violet-500/15 text-violet-300'

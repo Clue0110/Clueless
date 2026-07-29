@@ -62,7 +62,7 @@ function ExperienceCard() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0, ease: [0.22, 1, 0.36, 1] }}
-      className="relative p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default overflow-hidden transition-all duration-300 hover:border-violet-500/30 flex flex-col justify-between"
+      className="relative p-4 sm:p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default overflow-hidden transition-all duration-300 hover:border-violet-500/30 flex flex-col justify-between"
     >
       {/* Top: full-width sparkline */}
       <div className="w-full mb-4">
@@ -71,7 +71,7 @@ function ExperienceCard() {
       {/* Bottom: number + label */}
       <div>
         <div className="text-3xl font-black text-violet-400 font-sans leading-none mb-1">4.2+</div>
-        <div className="text-[11px] text-slate-400 font-sans">Years Professional Experience</div>
+        <div className="text-xs sm:text-[11px] text-slate-400 font-sans">Years Professional Experience</div>
       </div>
     </motion.div>
   )
@@ -83,14 +83,14 @@ function CompaniesCard() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30"
+      className="p-4 sm:p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30"
     >
       <div className="text-3xl font-black text-violet-400 font-sans mb-1">5</div>
-      <div className="text-[11px] text-slate-400 font-sans mb-3">Companies</div>
+      <div className="text-xs sm:text-[11px] text-slate-400 font-sans mb-3">Companies</div>
       <div className="flex flex-wrap gap-1.5">
         {COMPANIES.map(c => <CompanyTag key={c.name} {...c} />)}
       </div>
-      <div className="text-[10px] text-slate-600 font-sans mt-3">Fortune 500 · Startups · Academic R&amp;D</div>
+      <div className="text-[11px] sm:text-[10px] text-slate-600 font-sans mt-3">Fortune 500 · Startups · Academic R&amp;D</div>
     </motion.div>
   )
 }
@@ -101,7 +101,7 @@ function DAUCard() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
-      className="relative p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30 overflow-hidden"
+      className="relative p-4 sm:p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30 overflow-hidden"
     >
       {/* Live pulse dot */}
       <span className="absolute top-4 right-4 flex h-2.5 w-2.5">
@@ -110,8 +110,8 @@ function DAUCard() {
       </span>
 
       <div className="text-3xl font-black text-violet-400 font-sans mb-1">3.5M+</div>
-      <div className="text-[11px] text-slate-400 font-sans mb-2">Daily Active Users</div>
-      <div className="text-[10px] text-slate-500 font-sans leading-relaxed">
+      <div className="text-xs sm:text-[11px] text-slate-400 font-sans mb-2">Daily Active Users</div>
+      <div className="text-[11px] sm:text-[10px] text-slate-500 font-sans leading-relaxed">
         ≈ Population of Madrid<br />
         Live systems still serving traffic
       </div>
@@ -125,11 +125,11 @@ function FeaturesCard() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
-      className="p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30"
+      className="p-4 sm:p-5 rounded-xl border border-[#1e1e2e] bg-[#12121a] glass cursor-default transition-all duration-300 hover:border-violet-500/30"
     >
       <div className="text-3xl font-black text-violet-400 font-sans mb-1">27+</div>
-      <div className="text-[11px] text-slate-400 font-sans mb-2">Production Features Shipped</div>
-      <div className="text-[10px] text-slate-500 font-sans leading-relaxed">
+      <div className="text-xs sm:text-[11px] text-slate-400 font-sans mb-2">Production Features Shipped</div>
+      <div className="text-[11px] sm:text-[10px] text-slate-500 font-sans leading-relaxed">
         Incl. Supercharging wait-time forecasts, Robotaxi surge pricing, WAF recommendation engine, and more
       </div>
     </motion.div>
@@ -139,7 +139,7 @@ function FeaturesCard() {
 // ── Exported grid ─────────────────────────────────────────────────────────
 export default function RecruiterStatPills() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
       <ExperienceCard />
       <CompaniesCard />
       <DAUCard />

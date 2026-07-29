@@ -10,7 +10,7 @@ export default function ContactForm() {
   const [error, setError] = useState(null)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
-  const inputCls = `w-full rounded-xl border bg-transparent px-3 py-2 text-sm outline-none ${theme.border} ${theme.text} ${theme.font} focus:ring-2 ${theme.ring}`
+  const inputCls = `w-full rounded-xl border bg-transparent px-3 py-2.5 text-base sm:text-sm outline-none ${theme.border} ${theme.text} ${theme.font} focus:ring-2 ${theme.ring}`
 
   async function submit(e) {
     e.preventDefault()
@@ -54,7 +54,7 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={submit}
-      className={`max-w-md mx-auto mb-8 rounded-2xl border p-5 text-left ${theme.card} ${theme.border}`}
+      className={`max-w-md mx-auto mb-8 rounded-2xl border p-4 sm:p-5 text-left ${theme.card} ${theme.border}`}
     >
       <div className="grid gap-3">
         <input value={form.name} onChange={set('name')} placeholder={isRecruiter ? 'Your name' : 'your name'} className={inputCls} />
@@ -72,15 +72,15 @@ export default function ContactForm() {
           placeholder={isRecruiter ? 'Your message' : "what's up?"}
           className={`${inputCls} resize-y`}
         />
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
             disabled={status === 'sending'}
-            className={`rounded-xl px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
+            className={`min-h-11 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
           >
             {status === 'sending' ? 'Sending…' : isRecruiter ? 'Send message' : 'send it'}
           </button>
-          {error && <span className="text-sm text-red-400">{error}</span>}
+          {error && <span className="min-w-0 break-words text-sm text-red-400">{error}</span>}
         </div>
       </div>
     </form>

@@ -34,10 +34,11 @@ function ProjectCard({ project, index }) {
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.2, rotate: 5 }}
-              className={`${theme.muted} hover:${isRecruiter ? 'text-violet-400' : 'text-green-400'} transition-colors`}
+              whileTap={{ scale: 0.9 }}
+              className={`-m-2 flex h-11 w-11 shrink-0 items-center justify-center ${theme.muted} hover:${isRecruiter ? 'text-violet-400' : 'text-green-400'} transition-colors`}
               aria-label={`View ${project.title} on GitHub`}
             >
-              <FiGithub size={18} />
+              <FiGithub size={20} />
             </motion.a>
           )}
         </div>
@@ -59,7 +60,7 @@ function ProjectCard({ project, index }) {
         {isMobile && (
           <button
             onClick={() => setMobileExpanded(e => !e)}
-            className={`w-full flex items-center justify-between text-xs ${theme.accent} ${theme.font} py-1 mb-2`}
+            className={`w-full flex min-h-11 items-center justify-between text-sm ${theme.accent} ${theme.font} py-2 mb-1`}
           >
             <span>
               {mobileExpanded
@@ -71,7 +72,7 @@ function ProjectCard({ project, index }) {
               animate={{ rotate: mobileExpanded ? 180 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <FiChevronDown size={14} />
+              <FiChevronDown size={16} />
             </motion.span>
           </button>
         )}

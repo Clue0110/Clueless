@@ -49,7 +49,9 @@ function AppContent() {
         {showResume && <ResumePage />}
       </AnimatePresence>
 
-      {!isClueless && <CluelessChat />}
+      {/* The launcher is fixed at z-50, same as the resume overlay, so it floats
+          over the resume content — hide it while the resume is open. */}
+      {!isClueless && !showResume && <CluelessChat />}
     </div>
   )
 }

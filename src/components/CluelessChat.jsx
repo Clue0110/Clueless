@@ -84,21 +84,25 @@ export default function CluelessChat() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className={`mb-3 flex h-[28rem] w-80 flex-col overflow-hidden rounded-2xl border shadow-2xl ${theme.card} ${theme.border}`}
+            className={`mb-3 flex h-[min(28rem,70svh)] w-[min(20rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border shadow-2xl ${theme.card} ${theme.border}`}
           >
             <div className={`flex items-center justify-between border-b px-4 py-3 ${theme.border}`}>
               <div className="flex items-center gap-2">
-                <span className={`font-mono text-sm font-bold ${theme.accent}`}>( •ᴗ• )</span>
+                <Clueless pose="happy" size={16} label={false} />
                 <span className={`font-semibold ${theme.text}`}>Clueless</span>
               </div>
-              <button onClick={() => setOpen(false)} className={`${theme.muted} hover:opacity-70`}>
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close chat"
+                className={`-mr-1 flex h-10 w-10 items-center justify-center rounded-full ${theme.muted} hover:opacity-70`}
+              >
                 ✕
               </button>
             </div>
@@ -130,12 +134,13 @@ export default function CluelessChat() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && send()}
                 placeholder={PLACEHOLDER[mode]}
-                className={`flex-1 rounded-xl border bg-transparent px-3 py-2 text-sm outline-none ${theme.border} ${theme.text} focus:ring-2 ${theme.ring}`}
+                className={`min-w-0 flex-1 rounded-xl border bg-transparent px-3 py-2.5 text-base sm:text-sm outline-none ${theme.border} ${theme.text} focus:ring-2 ${theme.ring}`}
               />
               <button
                 onClick={send}
                 disabled={busy || !input.trim()}
-                className={`rounded-xl px-3 py-2 text-sm font-semibold text-white disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
+                aria-label="Send"
+                className={`h-11 w-11 shrink-0 rounded-xl text-sm font-semibold text-white disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
               >
                 ➤
               </button>
@@ -146,7 +151,7 @@ export default function CluelessChat() {
 
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`ml-auto flex items-center gap-2 rounded-full border px-4 py-2 shadow-lg ${theme.card} ${theme.border} hover:opacity-90`}
+        className={`ml-auto flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 shadow-lg ${theme.card} ${theme.border} hover:opacity-90`}
       >
         <Clueless pose={busy ? 'read' : open ? 'happy' : 'wave'} size={22} label={false} />
         {!open && <span className={`text-sm font-medium ${theme.text}`}>{LAUNCH_LABEL[mode]}</span>}

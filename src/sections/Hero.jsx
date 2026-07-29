@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import { personal } from '../data/content'
 import AnimatedText from '../components/AnimatedText'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { fadeInUp } from '../utils/animations'
 import { FiGithub, FiLinkedin, FiMail, FiArrowDown, FiFileText } from 'react-icons/fi'
 
@@ -13,6 +14,7 @@ const DEV_EMOJIS = ['🚀', '🐛', '☕', '💾', '⚡', '{ }', '</>', 'sudo', 
 
 export default function Hero() {
   const { isRecruiter, theme, mode, setShowResume } = useMode()
+  const isMobile = useIsMobile()
   const [bursts, setBursts] = useState([])
 
   // Spawn a handful of floating emojis at the click point (dev mode only).
@@ -39,22 +41,32 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden"
     >
-      {/* ── Beams background ── */}
+      {/* ── Beams background (desktop only — see note below) ── */}
       <div className="absolute inset-0 z-0">
-        <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
-          <Beams
-          beamWidth={2}
-          beamHeight={15}
-          beamNumber={12}
-          lightColor={beamColor}
-          speed={2}
-          noiseIntensity={1.75}
-          scale={0.2}
-          rotation={30}
-        />
-        </Suspense>
+        {isMobile ? (
+          // The Beams shader drags in the ~1MB three bundle and runs a
+          // full-screen WebGL loop. On a phone that is the most expensive thing
+          // on the page, for a background nobody looks at — use a static wash.
+          <div
+            className="absolute inset-0"
+            style={{ background: `radial-gradient(120% 80% at 50% 0%, ${beamColor}22 0%, transparent 60%), #000` }}
+          />
+        ) : (
+          <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
+            <Beams
+              beamWidth={2}
+              beamHeight={15}
+              beamNumber={12}
+              lightColor={beamColor}
+              speed={2}
+              noiseIntensity={1.75}
+              scale={0.2}
+              rotation={30}
+            />
+          </Suspense>
+        )}
         {/* Bottom fade to site bg */}
         <div className={`absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t ${
           isRecruiter ? 'from-[#0a0a0f]' : 'from-[#0d1117]'
@@ -62,8 +74,8 @@ export default function Hero() {
       </div>
 
       {/* ── Content: image LEFT + text RIGHT ── */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-28 pb-20 flex flex-col items-center justify-center">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 w-full md:w-auto mx-auto">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-6 pt-24 pb-16 sm:pt-28 sm:pb-20 flex flex-col items-center justify-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-12 md:gap-16 w-full md:w-auto mx-auto">
 
           {/* Profile image */}
           <motion.div
@@ -72,7 +84,7 @@ export default function Hero() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="flex-shrink-0"
           >
-            <div className={`relative w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden
+            <div className={`relative w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 rounded-full overflow-hidden
               border-2 ${ isRecruiter ? 'border-violet-500/50' : 'border-green-500/50'}
               transition-colors duration-700`}
               style={{ transform: 'scaleY(1.06)' }}
@@ -121,10 +133,10 @@ export default function Hero() {
               onClick={burstEmojis}
               className={`font-black tracking-tight mb-4 glitch-hover ${!isRecruiter ? 'cursor-pointer select-none' : ''} ${theme.text} ${theme.font} transition-all duration-500 leading-none`}
             >
-              <div className="text-5xl md:text-6xl lg:text-7xl">
+              <div className="text-[2.6rem] sm:text-5xl md:text-6xl lg:text-7xl">
                 <AnimatedText text="Sai Akilesh" />
               </div>
-              <div className={`text-5xl md:text-6xl lg:text-7xl pb-1 ${theme.gradientText}`}>
+              <div className={`text-[2.6rem] sm:text-5xl md:text-6xl lg:text-7xl pb-1 ${theme.gradientText}`}>
                 <AnimatedText text="Venigalla" />
               </div>
             </h1>

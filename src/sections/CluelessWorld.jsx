@@ -4,6 +4,7 @@ import { useMode } from '../context/ModeContext'
 import Clueless from '../components/Clueless'
 import SpeechBubble from '../components/SpeechBubble'
 import CluelessPitch from './CluelessPitch'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { WELCOME, TOUR, PITCH_INVITE } from '../data/cluelessTour'
 import { FiGithub, FiLinkedin, FiMail, FiArrowLeft, FiArrowRight } from 'react-icons/fi'
 
@@ -11,13 +12,19 @@ import { FiGithub, FiLinkedin, FiMail, FiArrowLeft, FiArrowRight } from 'react-i
 // the cat. It welcomes you, then physically walks across the screen from
 // station to station, narrating Sai's profile, and ends by offering to match
 // against a pasted job description (CluelessPitch).
+//
+// On a phone the vertical budget won't fit a card, a floating speech bubble, the
+// cat and the controls at once, so the dialogue moves inside the card and only
+// the welcome (which has no card yet) keeps a floating bubble.
 
-// Where the cat sits for each tour stop — alternating sides so every advance
-// is a visible walk across the screen.
-const positionFor = (i) => (i % 2 === 0 ? 18 : 76)
+// Where the cat sits for each tour stop — alternating sides so every advance is
+// a visible walk. The narrow bounds keep the speech bubble on-screen at phone
+// widths, where the cat is only ~90px from either edge at 18%/76%.
+const positionFor = (i, narrow) => (i % 2 === 0 ? (narrow ? 34 : 18) : narrow ? 66 : 76)
 
 export default function CluelessWorld() {
   const { theme } = useMode()
+  const isMobile = useIsMobile()
 
   // stage: enter → welcome → tour → invite → pitch
   const [stage, setStage] = useState('enter')
@@ -46,7 +53,7 @@ export default function CluelessWorld() {
     if (stage === 'tour' && i === step) return
     setStep(i)
     setStage('tour')
-    walkTo(positionFor(i))
+    walkTo(positionFor(i, isMobile))
   }
 
   const next = () => {
@@ -57,6 +64,12 @@ export default function CluelessWorld() {
     }
   }
   const back = () => step > 0 && goToStep(step - 1)
+
+  // On a phone the floating bubble would land on top of the card, so the card
+  // carries the line instead. The welcome has no card, so it keeps the bubble.
+  const inlineSay = isMobile
+  const hasBubble =
+    !walking && (stage === 'welcome' ? !welcomeDone : !inlineSay && (stage === 'tour' || stage === 'invite'))
 
   // The cat should never be caught looking bored: every resting state here is a
   // smiling one, and 'idle' is only the fallback.
@@ -73,14 +86,14 @@ export default function CluelessWorld() {
   // ── Pitch stage is a normal scrollable page ──────────────────────────
   if (stage === 'pitch') {
     return (
-      <div className="pt-14 min-h-screen">
-        <div className="mx-auto max-w-6xl px-6 pt-10">
+      <div className="pt-14 min-h-[100svh]">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 pt-10">
           <button
             onClick={() => {
               setStage('invite')
               setWalking(false)
             }}
-            className={`flex items-center gap-2 text-sm ${theme.muted} hover:opacity-70 ${theme.font}`}
+            className={`flex min-h-11 items-center gap-2 py-2 text-sm ${theme.muted} hover:opacity-70 ${theme.font}`}
           >
             <FiArrowLeft /> back to the tour
           </button>
@@ -91,10 +104,10 @@ export default function CluelessWorld() {
   }
 
   return (
-    <div className="relative h-screen overflow-hidden flex flex-col">
+    <div className="relative h-[100svh] overflow-hidden flex flex-col">
       {/* ── Card / dialogue area (sits opposite the cat on desktop) ── */}
       <div
-        className={`absolute inset-x-0 top-20 bottom-60 flex items-center justify-center px-4 md:px-16 ${
+        className={`absolute inset-x-0 top-24 bottom-[10.5rem] md:top-20 md:bottom-60 flex items-center justify-center px-3 sm:px-4 md:px-16 ${
           stage === 'tour' ? (side === 'left' ? 'md:justify-end' : 'md:justify-start') : ''
         }`}
       >
@@ -108,12 +121,13 @@ export default function CluelessWorld() {
           )}
 
           {stage === 'tour' && !walking && station && (
-            <StationCard key={station.id} station={station} />
+            <StationCard key={station.id} station={station} say={inlineSay ? station.say : null} />
           )}
 
           {stage === 'invite' && !walking && (
             <InvitePanel
               key="invite"
+              say={inlineSay ? `${PITCH_INVITE.say} ${PITCH_INVITE.question}` : null}
               onYes={() => setStage('pitch')}
               onReplay={() => goToStep(0)}
             />
@@ -137,55 +151,63 @@ export default function CluelessWorld() {
         }}
         style={{ x: '-50%' }}
       >
-        {/* speech bubble above the cat */}
-        <div
-          className={`absolute bottom-full mb-2 w-[min(320px,78vw)] ${
-            side === 'left' ? 'left-[-16px]' : 'right-[-16px]'
-          }`}
-        >
-          <AnimatePresence mode="wait">
-            {!walking && stage === 'welcome' && !welcomeDone && (
-              <SpeechBubble
-                key={`w${welcomeLine}`}
-                text={WELCOME.lines[welcomeLine]}
-                onDone={() => {
-                  setTimeout(() => {
-                    if (welcomeLine < WELCOME.lines.length - 1) setWelcomeLine(welcomeLine + 1)
-                    else setWelcomeDone(true)
-                  }, 1100)
-                }}
-              />
-            )}
-            {!walking && stage === 'tour' && station && (
-              <SpeechBubble key={`s${station.id}`} text={station.say} />
-            )}
-            {!walking && stage === 'invite' && (
-              <SpeechBubble key="invite-say" text={`${PITCH_INVITE.say} ${PITCH_INVITE.question}`} />
-            )}
-          </AnimatePresence>
-        </div>
+        {/* Speech bubble above the cat. Only mounted when it has a line — it's a
+            fixed 320px box centred on the cat, so an empty one still hung off
+            the screen edge at the phone walk positions. */}
+        {hasBubble && (
+          <div
+            className={`absolute bottom-full mb-2 w-[min(320px,86vw)] left-1/2 -translate-x-1/2 md:translate-x-0 ${
+              side === 'left' ? 'md:left-[-16px] md:right-auto' : 'md:left-auto md:right-[-16px]'
+            }`}
+          >
+            <AnimatePresence mode="wait">
+              {stage === 'welcome' && (
+                <SpeechBubble
+                  key={`w${welcomeLine}`}
+                  text={WELCOME.lines[welcomeLine]}
+                  onDone={() => {
+                    setTimeout(() => {
+                      if (welcomeLine < WELCOME.lines.length - 1) setWelcomeLine(welcomeLine + 1)
+                      else setWelcomeDone(true)
+                    }, 1100)
+                  }}
+                />
+              )}
+              {stage === 'tour' && station && (
+                <SpeechBubble key={`s${station.id}`} text={station.say} />
+              )}
+              {stage === 'invite' && (
+                <SpeechBubble key="invite-say" text={`${PITCH_INVITE.say} ${PITCH_INVITE.question}`} />
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
-        <Clueless pose={pose} size={56} label={false} facing={facing} />
+        <Clueless pose={pose} size={isMobile ? 40 : 56} label={false} facing={facing} />
       </motion.div>
 
       {/* ── Tour controls ── */}
       {stage === 'tour' && (
-        <div className="absolute bottom-6 left-0 right-0 z-30 flex flex-col items-center gap-3">
-          <div className="flex items-center gap-3">
+        <div className="absolute bottom-3 md:bottom-6 left-0 right-0 z-30 flex flex-col items-center gap-1 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <ControlBtn onClick={back} disabled={step === 0 || walking} aria="previous stop">
               <FiArrowLeft />
             </ControlBtn>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center">
               {TOUR.map((s, i) => (
                 <button
                   key={s.id}
                   onClick={() => !walking && goToStep(i)}
                   aria-label={s.title}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    i === step ? `w-6 ${theme.accentBg}` : `w-2 bg-white/20 hover:bg-white/40`
-                  }`}
-                />
+                  className="flex h-11 w-7 items-center justify-center"
+                >
+                  <span
+                    className={`block h-2 rounded-full transition-all duration-300 ${
+                      i === step ? `w-6 ${theme.accentBg}` : 'w-2 bg-white/20 hover:bg-white/40'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 
@@ -198,7 +220,7 @@ export default function CluelessWorld() {
               setStage('invite')
               walkTo(50)
             }}
-            className={`text-xs underline ${theme.muted} hover:opacity-70 ${theme.font}`}
+            className={`flex min-h-11 items-center px-3 text-xs underline ${theme.muted} hover:opacity-70 ${theme.font}`}
           >
             skip to the job-match magic
           </button>
@@ -238,7 +260,7 @@ function Panel({ children, wide = false }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -16, scale: 0.97 }}
       transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-      className={`w-full ${wide ? 'max-w-3xl' : 'max-w-xl'} max-h-full overflow-y-auto rounded-3xl border p-6 md:p-8 ${theme.card} ${theme.border} glow-clueless`}
+      className={`w-full ${wide ? 'max-w-3xl' : 'max-w-xl'} max-h-full overflow-y-auto rounded-3xl border p-4 sm:p-6 md:p-8 ${theme.card} ${theme.border} glow-clueless`}
     >
       {children}
     </motion.div>
@@ -260,11 +282,11 @@ function WelcomePanel({ onStart, onSkip }) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onStart}
-          className={`rounded-2xl px-5 py-3 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover} ${theme.font}`}
+          className={`min-h-11 rounded-2xl px-5 py-3 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover} ${theme.font}`}
         >
           {WELCOME.startLabel}
         </motion.button>
-        <button onClick={onSkip} className={`text-sm underline ${theme.muted} hover:opacity-70 ${theme.font}`}>
+        <button onClick={onSkip} className={`min-h-11 px-1 text-sm underline ${theme.muted} hover:opacity-70 ${theme.font}`}>
           {WELCOME.skipLabel}
         </button>
       </div>
@@ -272,10 +294,15 @@ function WelcomePanel({ onStart, onSkip }) {
   )
 }
 
-function InvitePanel({ onYes, onReplay }) {
+function InvitePanel({ onYes, onReplay, say }) {
   const { theme } = useMode()
   return (
     <Panel>
+      {say && (
+        <div className="mb-4">
+          <SpeechBubble text={say} />
+        </div>
+      )}
       <h2 className={`text-xl md:text-3xl font-bold ${theme.gradientText} ${theme.font}`}>
         the job-match magic ✨
       </h2>
@@ -288,11 +315,11 @@ function InvitePanel({ onYes, onReplay }) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onYes}
-          className={`rounded-2xl px-5 py-3 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover} ${theme.font}`}
+          className={`min-h-11 rounded-2xl px-5 py-3 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover} ${theme.font}`}
         >
           {PITCH_INVITE.yesLabel}
         </motion.button>
-        <button onClick={onReplay} className={`text-sm underline ${theme.muted} hover:opacity-70 ${theme.font}`}>
+        <button onClick={onReplay} className={`min-h-11 px-1 text-sm underline ${theme.muted} hover:opacity-70 ${theme.font}`}>
           replay the tour
         </button>
       </div>
@@ -302,18 +329,24 @@ function InvitePanel({ onYes, onReplay }) {
 
 // ── Station cards ───────────────────────────────────────────────────────────
 
-function StationCard({ station }) {
+function StationCard({ station, say }) {
   const { theme } = useMode()
   const { card } = station
   return (
     <Panel wide={card.type === 'projects'}>
-      <div className={`mb-4 text-xs font-semibold uppercase tracking-[0.2em] ${theme.accent} ${theme.font}`}>
+      <div className={`mb-3 text-xs font-semibold uppercase tracking-[0.2em] ${theme.accent} ${theme.font}`}>
         {station.title}
       </div>
 
+      {say && (
+        <div className="mb-4">
+          <SpeechBubble key={station.id} text={say} />
+        </div>
+      )}
+
       {card.type === 'profile' && (
         <div className="flex flex-col sm:flex-row items-center gap-5">
-          <div className={`h-28 w-28 shrink-0 overflow-hidden rounded-full border-2 ${theme.accentBorder}`}>
+          <div className={`h-20 w-20 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-full border-2 ${theme.accentBorder}`}>
             <img
               src={`${import.meta.env.BASE_URL}ProfileImage.jpeg`}
               alt={card.name}
@@ -409,7 +442,7 @@ function StationCard({ station }) {
               href={l.href}
               target={l.href.startsWith('http') ? '_blank' : undefined}
               rel={l.href.startsWith('http') ? 'noreferrer' : undefined}
-              className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-sm ${theme.border} ${theme.text} ${theme.font} hover:border-amber-500/50 transition`}
+              className={`flex min-h-11 w-full items-center gap-3 rounded-xl border px-4 py-3 text-sm ${theme.border} ${theme.text} ${theme.font} hover:border-amber-500/50 transition`}
             >
               <span className={theme.accent}>{l.icon}</span>
               {l.label}

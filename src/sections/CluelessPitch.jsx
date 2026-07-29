@@ -82,7 +82,7 @@ export default function CluelessPitch() {
   const heading = 'the job-match magic ✨'
 
   return (
-    <section id="pitch" className="relative z-10 mx-auto max-w-6xl px-6 py-24">
+    <section id="pitch" className="relative z-10 mx-auto max-w-6xl px-5 sm:px-6 py-14 sm:py-20 md:py-24">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -98,28 +98,28 @@ export default function CluelessPitch() {
 
       {/* Input */}
       {!pitch && (
-        <div className={`mt-8 rounded-2xl border p-5 ${theme.card} ${theme.border}`}>
-          <div className="flex items-start gap-4">
+        <div className={`mt-6 sm:mt-8 rounded-2xl border p-4 sm:p-5 ${theme.card} ${theme.border}`}>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4">
             <div className="shrink-0 pt-1">
               <Clueless pose={loading ? 'read' : 'happy'} />
             </div>
-            <div className="flex-1">
+            <div className="w-full min-w-0 flex-1">
               <textarea
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
                 rows={7}
                 placeholder="Paste the job description here…"
-                className={`w-full resize-y rounded-xl border bg-transparent p-3 text-sm outline-none ${theme.border} ${theme.text} ${theme.font} focus:ring-2 ${theme.ring}`}
+                className={`w-full resize-y rounded-xl border bg-transparent p-3 text-base sm:text-sm outline-none ${theme.border} ${theme.text} ${theme.font} focus:ring-2 ${theme.ring}`}
               />
-              <div className="mt-3 flex items-center gap-3">
+              <div className="mt-3 flex flex-wrap items-center gap-3">
                 <button
                   onClick={run}
                   disabled={loading || jd.trim().length < 20}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
+                  className={`min-h-11 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-40 ${theme.accentBg} ${theme.accentHover}`}
                 >
                   {loading ? 'clueless is reading…' : 'make the case!'}
                 </button>
-                {error && <span className="text-sm text-red-400">{error}</span>}
+                {error && <span className="min-w-0 break-words text-sm text-red-400">{error}</span>}
               </div>
             </div>
           </div>
@@ -280,7 +280,7 @@ function TourBtn({ onClick, label, theme }) {
   return (
     <button
       onClick={onClick}
-      className={`h-8 w-8 rounded-lg border text-sm ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
+      className={`h-11 w-11 rounded-lg border text-sm ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
     >
       {label}
     </button>

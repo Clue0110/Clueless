@@ -1,17 +1,25 @@
 import { useEffect, useRef } from 'react'
 import { useMode } from '../context/ModeContext'
+import { useIsMobile } from '../hooks/useIsMobile'
 
-// Floating particles background
+// Floating particles background.
+//
+// The connection pass is O(n²) per frame, so phones get fewer particles and no
+// connecting lines — it's a decorative backdrop and not worth the battery.
 export default function ParticleField() {
   const canvasRef = useRef(null)
   const { isRecruiter } = useMode()
+  const isMobile = useIsMobile()
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
+    const count = isMobile ? 22 : 60
+    const connect = !isMobile
     let animationId
     let particles = []
-    const PARTICLE_COUNT = 60
 
     function resize() {
       canvas.width = window.innerWidth
@@ -19,17 +27,14 @@ export default function ParticleField() {
     }
 
     function createParticles() {
-      particles = []
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          radius: Math.random() * 1.5 + 0.5,
-          opacity: Math.random() * 0.4 + 0.1,
-        })
-      }
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        radius: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.4 + 0.1,
+      }))
     }
 
     function draw() {
@@ -48,7 +53,7 @@ export default function ParticleField() {
         ctx.fillStyle = `rgba(${color}, ${p.opacity})`
         ctx.fill()
 
-        // Draw connections
+        if (!connect) return
         for (let j = i + 1; j < particles.length; j++) {
           const dx = p.x - particles[j].x
           const dy = p.y - particles[j].y
@@ -67,26 +72,30 @@ export default function ParticleField() {
       animationId = requestAnimationFrame(draw)
     }
 
+    // One named handler so the cleanup actually detaches it — an anonymous
+    // wrapper here leaked a listener on every orientation change.
+    const onResize = () => {
+      resize()
+      createParticles()
+    }
+
     resize()
     createParticles()
     draw()
-
-    window.addEventListener('resize', () => {
-      resize()
-      createParticles()
-    })
+    window.addEventListener('resize', onResize)
 
     return () => {
       cancelAnimationFrame(animationId)
-      window.removeEventListener('resize', resize)
+      window.removeEventListener('resize', onResize)
     }
-  }, [isRecruiter])
+  }, [isRecruiter, isMobile])
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
       style={{ opacity: 0.6 }}
+      aria-hidden="true"
     />
   )
 }
