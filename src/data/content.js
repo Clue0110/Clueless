@@ -59,11 +59,11 @@ export const experience = [
     color: '#e31937',
     bullets: {
       recruiter: [
-        'Accelerated Robotaxi payment processing by 85% — architected a scalable Apache Kafka pipeline with a Go-based Dead Letter Queue for asynchronous, fault-tolerant event processing and automated retries.',
-        'Achieved 90% faster ride data retrieval — engineered a high-throughput MySQL-to-Elasticsearch real-time sync pipeline for sub-second query latency across millions of ride records.',
-        'Shipped live Supercharger wait-time forecasts to Google Maps — built gRPC + OCPI integration delivering 100% visibility of real-time forecasts to millions of EV drivers.',
-        'Scaled referral device fingerprinting to 3.5M+ DAU — built Redis-backed idempotency layer + secure Apple Pay pre-authorization engine for fraud-resistant referral processing.',
-        'Optimized Robotaxi surge pricing for 400+ vehicle fleet — leveraged H3 geospatial indexing to compute real-time rate adjustments based on location, congestion, and demand patterns.',
+        'Accelerated Robotaxi payment processing by 85% by architecting a scalable Apache Kafka pipeline with a Go-based Dead Letter Queue for asynchronous, fault-tolerant event processing and automated retries.',
+        'Reduced ride-data retrieval latency by 90%, enabling sub-second queries across millions of ride records, by engineering a high-throughput real-time MySQL-to-Elasticsearch sync pipeline.',
+        'Delivered live Supercharger wait-time forecasts to millions of EV drivers, achieving 100% real-time forecast visibility on Google Maps, by building a gRPC + OCPI integration.',
+        'Scaled referral device fingerprinting to 3.5M+ DAU with fraud-resistant processing by building a Redis-backed idempotency layer and a secure Apple Pay pre-authorization engine.',
+        'Optimized surge pricing across a 400+ vehicle Robotaxi fleet, computing real-time rate adjustments from location, congestion, and demand patterns, by leveraging H3 geospatial indexing.',
       ],
       dev: [
         'built a kafka pipeline + go DLQ that made robotaxi payments 85% faster — turns out async event processing hits different when you\'re charging people for robot car rides.',
@@ -82,8 +82,8 @@ export const experience = [
     color: '#57068c',
     bullets: {
       recruiter: [
-        'Architected a cost-effective IPv4 host reservation system using FastAPI + MySQL, replacing expensive ISC licensing tools — designed RESTful CRUD APIs and database models for Kea DHCP lease management.',
-        'Containerized Kea DHCP, PostgreSQL, and FastAPI services with Docker — leveraged Docker Networks for inter-microservice communication, achieving 50% reduction in resource consumption.',
+        'Eliminated costly ISC licensing fees by architecting an IPv4 host reservation system with FastAPI + MySQL, designing RESTful CRUD APIs and database models for Kea DHCP lease management.',
+        'Reduced infrastructure resource consumption by 50% by containerizing Kea DHCP, PostgreSQL, and FastAPI services with Docker and orchestrating inter-service communication via Docker Networks.',
       ],
       dev: [
         'NYU needed a way to manage IP reservations without paying ISC a fortune — so i built a FastAPI + MySQL backend from scratch. REST APIs, CRUD, the whole thing.',
@@ -99,12 +99,12 @@ export const experience = [
     color: '#00a1e0',
     bullets: {
       recruiter: [
-        'Developed Citrix WAF Security Recommendation Engine as a microservice — Python + C++ engine identifying critical web app vulnerabilities with real-time analytics; drove 60% increase in AppSec license sales.',
-        'Deployed security engine across cloud (Kubernetes/Docker) and on-premises (FreeBSD kernel) — implemented technology scanning to tailor attack payloads and streamline URL exploration across 10,000+ URLs.',
-        'Reduced Unified Security API response time by 95% (4min → <10s) — rewrote core processing in C++, implemented Redis caching, and eliminated redundant database queries.',
-        'Optimized PostgreSQL performance — diagnosed bottlenecks via Splunk log analysis, created strategic indexes, and refactored SQL queries to reduce query time by 50% and boost DB efficiency by 20%.',
-        'Automated WAF signature categorization using Google Gemini + CVE data — reduced CPU usage by 30% and saved 20+ developer-hours per update cycle through LLM-powered prompt engineering.',
-        'Designed centralized API management system — used API specification files as single source of truth for security policy enforcement across REST and gRPC, reducing API security setup effort by 60%.',
+        'Drove a 60% increase in AppSec license sales by developing the Citrix WAF Security Recommendation Engine — a Python + C++ microservice identifying critical web-app vulnerabilities with real-time analytics.',
+        'Streamlined vulnerability scanning across 10,000+ URLs in cloud (Kubernetes/Docker) and on-premises (FreeBSD kernel) deployments by implementing technology scanning that tailors attack payloads per stack.',
+        'Reduced Unified Security API response time by 95% (4 min → <10 s) by rewriting core processing in C++, implementing Redis caching, and eliminating redundant database queries.',
+        'Cut PostgreSQL query time by 50% and boosted DB efficiency by 20% by diagnosing bottlenecks via Splunk log analysis, creating strategic indexes, and refactoring SQL queries.',
+        'Saved 20+ developer-hours per update cycle and reduced CPU usage by 30% by automating WAF signature categorization with Google Gemini and CVE data through LLM-powered prompt engineering.',
+        'Reduced API security setup effort by 60% by designing a centralized API management system using specification files as the single source of truth for policy enforcement across REST and gRPC.',
       ],
       dev: [
         'built a WAF recommendation engine in python + C++ that scans web apps for vulnerabilities. it was so good it bumped security license sales by 60%.',
@@ -124,12 +124,12 @@ export const experience = [
     color: '#00a1e0',
     bullets: {
       recruiter: [
-        'Engineered Jenkins CI/CD pipeline (Java/Groovy + Ansible) for WAF cloud migration — reduced SDLC from 16 hours to <2 hours (88% reduction); built Prometheus + Grafana observability dashboards.',
-        'Designed dynamic build scheduling module — parallelized workloads via dependency graph analysis, increasing build throughput 30x (1/week → 6/day).',
-        'Built globally-adopted test selection module in Java — dynamically analyzes codebases to run only relevant tests, eliminating 100% of false negatives across all NetScaler feature teams.',
-        'Architected multi-cloud disaster recovery (AWS/Azure/GCP) with Terraform + Ansible — automated VM snapshotting and heartbeat monitoring for zero-downtime failover; 75% faster DR provisioning.',
-        'Implemented proxy authentication module in C for NetScaler kernel — secured WAF signature downloads from S3, closing a critical unauthenticated data channel vulnerability.',
-        'Automated signature update pipeline (Python/C/Shell) — hashing-based change detection triggering S3 PRs + auto-generated release notes; reduced processing time by 84%.',
+        'Reduced the WAF cloud-migration SDLC from 16 hours to under 2 (88% reduction) by engineering a Jenkins CI/CD pipeline (Java/Groovy + Ansible) with Prometheus + Grafana observability dashboards.',
+        'Increased build throughput 30x (1/week → 6/day) by designing a dynamic build-scheduling module that parallelizes workloads through dependency-graph analysis.',
+        'Eliminated 100% of false negatives across all NetScaler feature teams by building a globally-adopted Java test-selection module that dynamically analyzes codebases to run only relevant tests.',
+        'Achieved zero-downtime failover and 75% faster DR provisioning by architecting multi-cloud disaster recovery (AWS/Azure/GCP) with Terraform + Ansible, automating VM snapshotting and heartbeat monitoring.',
+        'Closed a critical unauthenticated data-channel vulnerability by implementing a proxy authentication module in C for the NetScaler kernel, securing WAF signature downloads from S3.',
+        'Cut signature-update processing time by 84% by automating the pipeline (Python/C/Shell) with hashing-based change detection, auto-triggered S3 PRs, and auto-generated release notes.',
       ],
       dev: [
         'the WAF cloud migration had a 16-hour SDLC. i built a jenkins pipeline with ansible playbooks + prometheus/grafana dashboards and got it down to 2 hours. *88% go brr*.',
@@ -149,10 +149,10 @@ export const experience = [
     color: '#00a1e0',
     bullets: {
       recruiter: [
-        'Built Flask-based rapid testing tool — reduced NetScaler sub-feature validation from 24 hours to 1 hour (96% reduction), boosting developer productivity by 25%.',
-        'Developed self-learning payload generation tool in Python — auto-generated 1,000+ randomized HTTP attack payloads per CI/CD commit for WAF regression testing.',
-        'Pioneered browser fingerprinting bot detection prototype in JavaScript — combined duck typing + user-agent analysis to unmask spoofed bots bypassing WAF defenses.',
-        'Resolved high-priority production WAF escalations — debugged 25-year-old legacy C codebase for critical customer-impacting incidents.',
+        'Reduced NetScaler sub-feature validation from 24 hours to 1 (96% reduction), boosting developer productivity by 25%, by building a Flask-based rapid testing tool.',
+        'Strengthened WAF regression testing with 1,000+ randomized HTTP attack payloads per CI/CD commit by developing a self-learning payload-generation tool in Python.',
+        'Unmasked spoofed bots bypassing WAF defenses by pioneering a browser-fingerprinting bot-detection prototype in JavaScript combining duck typing and user-agent analysis.',
+        'Resolved high-priority, customer-impacting production WAF escalations by debugging a 25-year-old legacy C codebase.',
       ],
       dev: [
         'testing a kernel change took 24 hours. built a flask app that lets devs test their specific feature in isolation — got it down to 1 hour. productivity jumped 25%.',
@@ -170,9 +170,9 @@ export const experience = [
     color: '#1428a0',
     bullets: {
       recruiter: [
-        'Engineered a system to record a panoramic 4K movie using multiple phones — synchronized dual-camera capture, real-time stitching with Python + OpenCV, and sub-100ms per-frame processing.',
-        'Implemented histogram matching + multi-band blending — eliminated visible seams, maintained 99% source resolution, and reduced user-reported visual artifacts by 30%.',
-        'Built multi-threaded Tkinter diagnostic GUI — real-time visualization of individual camera feeds alongside stitched panoramic output for live debugging.',
+        'Achieved sub-100ms per-frame processing for panoramic 4K movie recording across multiple phones by engineering synchronized dual-camera capture with real-time stitching in Python + OpenCV.',
+        'Eliminated visible seams while preserving 99% of source resolution, cutting user-reported visual artifacts by 30%, by implementing histogram matching and multi-band blending.',
+        'Enabled live pipeline debugging by building a multi-threaded Tkinter diagnostic GUI visualizing individual camera feeds alongside the stitched panoramic output in real time.',
       ],
       dev: [
         'recorded a panoramic 4K movie using multiple phones. synchronized capture, stitched feeds in real-time (<100ms per frame) with SIFT, RANSAC, and multi-threading.',
@@ -189,9 +189,9 @@ export const experience = [
     color: '#1428a0',
     bullets: {
       recruiter: [
-        'Developed a simple AI eraser using a custom GAN-based neural inpainting model — trained on 350,000+ indoor images for robust background reconstruction.',
-        'Built automated image scraper in Python — harvested diverse 350K-image dataset from Google Image Search, accelerating R&D timelines; praised by Samsung leadership.',
-        'Trained flash-artifact removal GAN — enabled clean inpainting under harsh lighting conditions, improving real-world reliability.',
+        'Delivered robust background reconstruction for an AI object-eraser by developing a custom GAN-based neural inpainting model trained on 350,000+ indoor images.',
+        'Accelerated R&D timelines, earning direct recognition from Samsung leadership, by building an automated Python scraper that harvested a diverse 350K-image dataset from Google Image Search.',
+        'Improved real-world inpainting reliability under harsh lighting by training a dedicated flash-artifact-removal GAN.',
       ],
       dev: [
         'trained a GAN to erase objects from photos and reconstruct the background — a simple AI eraser feature. fed it 350k images i scraped from google.',
@@ -208,8 +208,8 @@ export const experience = [
     color: '#1428a0',
     bullets: {
       recruiter: [
-        'Investigated smartphone sensor-based gait authentication — captured 100Hz accelerometer + gyroscope data from diverse user cohort for biometric pattern analysis.',
-        'Developed custom peak detection algorithm in Python — correlated accelerometer footstep signatures with unique gait baselines for ML-based authentication.',
+        'Enabled biometric gait-authentication research by capturing 100Hz accelerometer + gyroscope data from a diverse smartphone user cohort for pattern analysis.',
+        'Correlated footstep signatures with unique per-user gait baselines for ML-based authentication by developing a custom peak-detection algorithm in Python.',
       ],
       dev: [
         'turns out everyone walks differently. i captured 100Hz accelerometer data from phone sensors and built a peak detection algo to fingerprint individual footsteps.',
@@ -225,8 +225,8 @@ export const experience = [
     color: '#e63312',
     bullets: {
       recruiter: [
-        'Developed dynamic e-commerce platform using Adobe Experience Manager — implemented AJAX-based rendering to eliminate page refreshes, increasing conversions and engagement.',
-        'Built gamified spin-the-wheel promotion (JavaScript + TailwindCSS) — 35% increase in email sign-ups over static forms; adopted as reusable marketing component.',
+        'Increased conversions and engagement by developing a dynamic e-commerce platform on Adobe Experience Manager with AJAX-based rendering that eliminated full-page refreshes.',
+        'Grew email sign-ups by 35% over static forms by building a gamified spin-the-wheel promotion in JavaScript + TailwindCSS, later adopted as a reusable marketing component.',
       ],
       dev: [
         'built an e-commerce site on adobe experience manager with AJAX rendering — no more full page reloads. conversions went up noticeably.',
@@ -249,11 +249,11 @@ export const projects = [
     },
     bullets: {
       recruiter: [
-        'Engineered RAG pipeline with ChromaDB vector store — reduced LLM token consumption by embedding entire course content for optimized AI tutor context retrieval.',
-        'Integrated Redis chat history caching — decreased AI chatbot response latency by 95% for real-time conversational tutoring.',
-        'Built multimodal AI tutor (chat + voice) using LangChain + Gemini — prompt-engineered to strictly scope responses to user-provided materials.',
-        'Developed auto-podcast generation using coquiTTS + ElevenLabs + pydub — 40% increase in user engagement from audio content.',
-        'Implemented auto-quiz generation (OpenAI + Gemini) with MongoDB progress tracking — 30% improvement in measured learning efficiency.',
+        'Reduced LLM token consumption by engineering a RAG pipeline with a ChromaDB vector store that embeds entire course content for optimized AI-tutor context retrieval.',
+        'Decreased AI chatbot response latency by 95% by integrating Redis-backed chat-history caching for real-time conversational tutoring.',
+        'Scoped AI-tutor responses strictly to user-provided materials by building a multimodal (chat + voice) tutor with LangChain + Gemini and targeted prompt engineering.',
+        'Increased user engagement by 40% by developing auto-podcast generation from course content with coquiTTS, ElevenLabs, and pydub.',
+        'Improved measured learning efficiency by 30% by implementing auto-quiz generation (OpenAI + Gemini) with MongoDB progress tracking.',
       ],
       dev: [
         'RAG pipeline with chromaDB so the AI tutor only answers from YOUR materials. no hallucinating random facts.',
@@ -275,10 +275,10 @@ export const projects = [
     },
     bullets: {
       recruiter: [
-        'Built real-time streaming architecture with Apache Kafka + Zookeeper — ingests live stock data, social feeds, and news; telemetry service pushes instant alert on sentiment flags.',
-        'Engineered tri-model sentiment engine — SparkNLP ML model + rule-based analyzer + LLM fine-tuned for Reddit/GenZ language for superior accuracy.',
-        'Constructed two-stage prediction: LSTM for initial price forecast → 2-layer neural network combining predictions + sentiment + 60h historical data for final buy/sell signals.',
-        'Leveraged PySpark + Dask for distributed preprocessing; Redis caching for real-time 60h sliding window; MongoDB for serialized model storage (70% faster model loading).',
+        'Enabled instant alerts on sentiment spikes by building a real-time streaming architecture with Apache Kafka + Zookeeper ingesting live stock data, social feeds, and news.',
+        'Achieved superior sentiment accuracy by engineering a tri-model engine: SparkNLP ML model, rule-based analyzer, and an LLM fine-tuned for Reddit/Gen-Z language.',
+        'Generated automated buy/sell signals by constructing a two-stage predictor — LSTM price forecast feeding a 2-layer neural network over predictions, sentiment, and 60h of historical data.',
+        'Cut model loading time by 70% by combining PySpark + Dask distributed preprocessing, Redis caching of a real-time 60h sliding window, and MongoDB serialized-model storage.',
       ],
       dev: [
         'kafka + zookeeper for real-time streaming of stock data, reddit posts, and news articles. push alerts when sentiment spikes.',
@@ -299,9 +299,9 @@ export const projects = [
     },
     bullets: {
       recruiter: [
-        'Designed normalized database schema with ER diagrams — modeled complex relationships across clients, donors, volunteers, donations, and inventory in PostgreSQL.',
-        'Implemented XSS/SQL injection prevention, input sanitization, and Flask-Login session authentication for secure multi-role access control.',
-        'Built volunteer leaderboard + automated report generation — data visualizations for client metrics, inventory levels, and expense tracking.',
+        'Modeled complex relationships across clients, donors, volunteers, donations, and inventory by designing a normalized PostgreSQL schema from ER diagrams.',
+        'Secured multi-role access control by implementing XSS/SQL-injection prevention, input sanitization, and Flask-Login session authentication.',
+        'Delivered data-driven insights on client metrics, inventory levels, and expenses by building a volunteer leaderboard and automated report generation with visualizations.',
       ],
       dev: [
         'proper ER-designed postgres schema covering donations, clients, volunteers, inventory — all the relationships.',
@@ -321,9 +321,9 @@ export const projects = [
     },
     bullets: {
       recruiter: [
-        'Developed Gemini 1.0 Pro-powered AI therapist with customizable personality — prompt-engineered for context-aware, confidential conversational support with scope-limited responses.',
-        'Conducted rigorous UX evaluation: 30+ user interviews, NASA-TLX workload assessment, ANOVA/T-Test validation, and SUS scoring.',
-        'Prototyped VR wellness environment using Unity + C# via Wonda — exploring immersive next-gen mental health platforms.',
+        'Provided context-aware, confidential conversational support by developing a Gemini 1.0 Pro-powered AI therapist with customizable personality and scope-limited prompt engineering.',
+        'Validated product decisions through rigorous UX evaluation — 30+ user interviews, NASA-TLX workload assessment, ANOVA/T-Test analysis, and SUS scoring.',
+        'Explored immersive next-gen mental-health platforms by prototyping a VR wellness environment in Unity + C# via Wonda.',
       ],
       dev: [
         'gemini-powered AI therapist with prompt engineering so it stays helpful and safe. personality is even customizable.',
