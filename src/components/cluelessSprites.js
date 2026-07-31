@@ -260,6 +260,120 @@ const FACES = {
 
 const FACE_AT = [4, 7]
 
+// ── Side-view rigs ──────────────────────────────────────────────────────────
+// The chibi sit rig above is for stationary poses. Locomotion and lying down
+// get proper full bodies — head, torso, four legs, tail — drawn facing right
+// and bottom-aligned with the sit rig so pose switches don't hop.
+
+const WALK_A = [
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................XX....XX........',
+  '...............XBBX..XBBX.......',
+  '...............XBPBXXBPBX.......',
+  '..............XBBBBBBBBBBBBX....',
+  '..............XBBDBBDBBBBBBX....',
+  '..DD..........XBBBBBBESBBBBX....',
+  '..DD..........XBBBBBBEEBWWNX....',
+  '...DD.........XBBBBBBPPBWWWX....',
+  '...DD.........XBBBBBBBBBBBBX....',
+  '....DDXXXXXXXXBBBBBBBBBBBBBX....',
+  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
+  '...XBBDBBBDBBBBBBBBBBBBBBBBX....',
+  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
+  '....XBBBBBBBBBBBBBBBBBBBBBX.....',
+  '.....XBBX.XBBX....XBBX.XBBX.....',
+  '.....XBBX.XBBX....XBBX.XBBX.....',
+  '.....XWWX.XWWX....XWWX.XWWX.....',
+]
+
+const WALK_B = [
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................XX....XX........',
+  '...............XBBX..XBBX.......',
+  '...............XBPBXXBPBX.......',
+  '..............XBBBBBBBBBBBBX....',
+  '..............XBBDBBDBBBBBBX....',
+  '...DD.........XBBBBBBESBBBBX....',
+  '...DD.........XBBBBBBEEBWWNX....',
+  '....DD........XBBBBBBPPBWWWX....',
+  '....DD........XBBBBBBBBBBBBX....',
+  '.....DXXXXXXXXBBBBBBBBBBBBBX....',
+  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
+  '...XBBDBBBDBBBBBBBBBBBBBBBBX....',
+  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
+  '....XBBBBBBBBBBBBBBBBBBBBBX.....',
+  '....XBBX...XBBX..XBBX...XBBX....',
+  '....XBBX...XBBX..XBBX...XBBX....',
+  '....XWWX...XWWX..XWWX...XWWX....',
+]
+
+// Curled up on its side, eyes shut; the tail tip flicks between frames.
+const LIE_A = [
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '......XX..XX....................',
+  '.....XBBXXBBX...................',
+  '.....XBBBBBBXXXXXXXXXXXXXX......',
+  '....XBBBBBBBBBBBBBBBBBBBBBBX....',
+  '....XBEEBBBBBBBBBBBBBBBBBBBX....',
+  '....XBBWWPBBBBBBBBBBBBBBBBBX....',
+  '....XBBBBBBBBBBBBBBBBBBDDBBX....',
+  '.....XBBBBBBBBBBBBBBBBDDDBX.....',
+  '......XXXXXXXXXXXXXXXXXXXX......',
+]
+
+const LIE_B = [
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '......XX..XX....................',
+  '.....XBBXXBBX...................',
+  '.....XBBBBBBXXXXXXXXXXXXXX......',
+  '....XBBBBBBBBBBBBBBBBBBBBBBX....',
+  '....XBEEBBBBBBBBBBBBBBBBBBBX....',
+  '....XBBWWPBBBBBBBBBBBBBBBBBX....',
+  '....XBBBBBBBBBBBBBBBBBDDBBBX....',
+  '.....XBBBBBBBBBBBBBBBDDDDBX.....',
+  '......XXXXXXXXXXXXXXXXXXXX......',
+]
+
 // ── Frame assembly ──────────────────────────────────────────────────────────
 
 function build({ face: faceName = 'happy', tail = TAIL_UP_A, tailAt = TAIL_UP_AT, paws = PAWS_DOWN, pawsAt = 21, arm = null, armAt = 0, extras = [] }) {
@@ -292,12 +406,10 @@ export const POSES = {
     ms: 340,
     frames: [build({ face: 'joy' }), build({ face: 'joy', tail: TAIL_UP_B })],
   },
+  // Side-view quadruped trot — a whole cat, not a gliding face.
   walk: {
     ms: 150,
-    frames: [
-      build({ face: 'joyBlink', paws: PAWS_STEP_L, pawsAt: 20, tail: TAIL_UP_B }),
-      build({ face: 'joyBlink', paws: PAWS_STEP_R, pawsAt: 20 }),
-    ],
+    frames: [WALK_A, WALK_B],
   },
   wave: {
     ms: 300,
@@ -339,13 +451,10 @@ export const POSES = {
     ms: 400,
     frames: [build({ face: 'love' }), build({ face: 'love', tail: TAIL_UP_B })],
   },
+  // Lying on its side, fully out. Tail tip flicks mid-dream.
   sleep: {
-    ms: 1100,
-    frames: [
-      build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-      build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-      build({ face: 'happyBlink', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-    ],
+    ms: 1200,
+    frames: [LIE_A, LIE_A, LIE_B],
   },
   // Half-lidded stare into the middle distance; only the tail tip flicks.
   bored: {

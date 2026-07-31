@@ -59,22 +59,30 @@ function rectsFor(rows) {
   return out
 }
 
-export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right' }) {
+// `tempo` stretches a pose's frame timing (>1 = slower) — a strolling cat
+// needs slower legs than a sprinting one, same frames.
+export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right', tempo = 1 }) {
   const { frames, ms } = POSES[pose] || POSES.idle
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
     setTick(0)
     if (!ms || frames.length < 2) return
-    const id = setInterval(() => setTick((t) => t + 1), ms)
+    const id = setInterval(() => setTick((t) => t + 1), ms * tempo)
     return () => clearInterval(id)
-  }, [pose]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pose, tempo]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const width = size * 2.3
   const height = width * (ROWS / COLS)
 
+  const base = BODY_ANIM[pose] || BODY_ANIM.idle
+  const bodyAnim =
+    tempo !== 1 && base.transition?.duration
+      ? { ...base, transition: { ...base.transition, duration: base.transition.duration * tempo } }
+      : base
+
   return (
-    <motion.div animate={BODY_ANIM[pose] || BODY_ANIM.idle} aria-hidden="true" className="relative">
+    <motion.div animate={bodyAnim} aria-hidden="true" className="relative">
       <svg
         viewBox={`0 0 ${COLS} ${ROWS}`}
         width={width}
@@ -87,7 +95,7 @@ export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right'
 
       {pose === 'sleep' && (
         <motion.span
-          className="absolute -top-3 right-0 font-mono text-sm font-bold"
+          className="absolute top-1/4 left-1/4 font-mono text-sm font-bold"
           style={{ color: PALETTE.B }}
           animate={{ opacity: [0, 1, 0], y: [6, -6] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}

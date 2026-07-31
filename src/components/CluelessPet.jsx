@@ -15,20 +15,26 @@ import { useIsMobile } from '../hooks/useIsMobile'
 //  - drag it too much  → dizzy (X eyes) for ~5s before it recovers
 //  - drag the yarn ball anywhere → the cat chases it and starts playing
 
-const WALK_SPEED = 130 // px/s
+const STROLL_SPEED = 45 // px/s — an unhurried walk
+const CHASE_SPEED = 180 // px/s — nothing unhurried about a thrown yarn ball
 const DIZZY_THRESHOLD = 2400 // accumulated drag px before it gets dizzy
 const DIZZY_MS = 5000
 const TOP_MARGIN = 100 // stay out from under the navbar
 const EDGE = 10
 const TOY_SIZE = 26
 
+// The pet is mostly sedentary: it lounges through long stationary behaviors
+// and only goes on a little walk about once every couple of minutes.
+const OUTING_GAP_MS = [100_000, 160_000]
+
 const rand = (a, b) => a + Math.random() * (b - a)
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 const vw = () => window.innerWidth
 const vh = () => window.innerHeight
 
-// Loosely weighted plan; wander shows up often so the pet keeps moving.
-const BEHAVIOR_PLAN = ['wander', 'idle', 'wander', 'bored', 'wander', 'sleep', 'laptop', 'wander', 'sneeze', 'play', 'laptop']
+// What it does between outings — mostly hacking on its laptop, playing with
+// the yarn ball, or sleeping; a little boredom and the odd sneeze for flavor.
+const STATIONARY_PLAN = ['laptop', 'sleep', 'play', 'laptop', 'sleep', 'play', 'laptop', 'sneeze', 'bored', 'sleep']
 
 // ── Yarn ball (pixel art, matches the cat's palette) ────────────────────────
 
@@ -78,6 +84,7 @@ export default function CluelessPet() {
 
   const [pose, setPose] = useState('idle')
   const [facing, setFacing] = useState('left')
+  const [gait, setGait] = useState('stroll') // stroll = slow legs, sprint = quick
   const [emote, setEmote] = useState(null)
   const [hearts, setHearts] = useState([])
   const [toyWiggle, setToyWiggle] = useState(false)
@@ -97,6 +104,9 @@ export default function CluelessPet() {
   const dizzyUntil = useRef(0)
   const chatRef = useRef(showChat)
   const lastBehavior = useRef(null)
+  // Outing scheduling: first stroll lands ~2min after load, then every ~2min.
+  const lastOuting = useRef(Date.now())
+  const outingGap = useRef(rand(...OUTING_GAP_MS))
 
   const alive = (id) => runId.current === id
   const cancel = () => {
@@ -108,12 +118,13 @@ export default function CluelessPet() {
   const clampX = (v) => Math.min(Math.max(v, EDGE), vw() - catW - EDGE)
   const clampY = (v) => Math.min(Math.max(v, TOP_MARGIN), vh() - catH - EDGE)
 
-  async function walkTo(id, tx, ty, speed = WALK_SPEED) {
+  async function walkTo(id, tx, ty, speed = STROLL_SPEED) {
     const dx = tx - x.get()
     const dy = ty - y.get()
     const dist = Math.hypot(dx, dy)
     if (dist < 6) return
     setFacing(dx >= 0 ? 'right' : 'left')
+    setGait(speed < 90 ? 'stroll' : 'sprint')
     setPose('walk')
     const dur = Math.max(0.5, dist / speed)
     const t1 = animate(x, tx, { duration: dur, ease: 'linear' })
@@ -125,29 +136,40 @@ export default function CluelessPet() {
   // ── Behaviors ─────────────────────────────────────────────────────────────
 
   async function wanderB(id) {
-    await walkTo(id, clampX(rand(0, vw())), clampY(rand(TOP_MARGIN, vh())))
+    // A modest stroll from wherever it is, not a trek across the screen —
+    // pick the direction whose clamped destination is actually reachable.
+    const ang = rand(0, Math.PI * 2)
+    const dist = rand(220, 520)
+    const candidates = [ang, ang + Math.PI].map((a) => ({
+      x: clampX(x.get() + Math.cos(a) * dist),
+      y: clampY(y.get() + Math.sin(a) * dist),
+    }))
+    const target = candidates.reduce((best, c) =>
+      Math.hypot(c.x - x.get(), c.y - y.get()) > Math.hypot(best.x - x.get(), best.y - y.get()) ? c : best,
+    )
+    await walkTo(id, target.x, target.y)
     if (alive(id)) setPose('idle')
   }
 
   async function idleB(id) {
     setPose('idle')
-    await wait(rand(2500, 4500))
+    await wait(rand(8000, 14000))
   }
 
   async function boredB(id) {
     setPose('bored')
-    await wait(rand(3500, 5500))
+    await wait(rand(10000, 18000))
   }
 
   async function sleepB(id) {
     setPose('sleep')
-    await wait(rand(6000, 10000))
+    await wait(rand(20000, 40000))
     if (alive(id)) setPose('idle')
   }
 
   async function laptopB(id) {
     setPose('laptop')
-    await wait(rand(5000, 8000))
+    await wait(rand(15000, 30000))
     if (alive(id)) setPose('idle')
   }
 
@@ -161,28 +183,39 @@ export default function CluelessPet() {
     if (alive(id)) setPose('idle')
   }
 
-  async function playB(id) {
-    // Walk up next to wherever the yarn ball is, then bat at it.
+  async function playB(id, speed = STROLL_SPEED) {
+    // Walk up next to wherever the yarn ball is, then bat at it. Ambles over
+    // when it's its own idea; sprints when the ball was just thrown.
     const tx = toyX.get()
     const ty = toyY.get()
     const standLeft = tx > catW + 50
     const gx = clampX(standLeft ? tx - catW + 12 : tx + TOY_SIZE - 6)
     const gy = clampY(ty - catH + TOY_SIZE + 6)
-    await walkTo(id, gx, gy)
+    await walkTo(id, gx, gy, speed)
     if (!alive(id)) return
     setFacing(standLeft ? 'right' : 'left')
     setPose('play')
     setToyWiggle(true)
-    await wait(rand(3000, 5200))
+    await wait(rand(4000, 8000))
     setToyWiggle(false)
     if (alive(id)) setPose('idle')
   }
 
   const BEHAVIORS = { wander: wanderB, idle: idleB, bored: boredB, sleep: sleepB, laptop: laptopB, sneeze: sneezeB, play: playB }
 
+  // Stationary lounging by default; when the outing timer fires (~2min) the
+  // pet goes for a stroll — or, sometimes, wanders over to its yarn ball.
+  // 'play' in the lounging rotation only counts as stationary when the ball
+  // is already close by; otherwise it stays at the laptop.
   const nextBehavior = () => {
-    let b = BEHAVIOR_PLAN[Math.floor(Math.random() * BEHAVIOR_PLAN.length)]
-    if (b === lastBehavior.current && b !== 'wander') b = 'wander'
+    if (Date.now() - lastOuting.current > outingGap.current) {
+      lastOuting.current = Date.now()
+      outingGap.current = rand(...OUTING_GAP_MS)
+      return Math.random() < 0.3 ? 'play' : 'wander'
+    }
+    let b = STATIONARY_PLAN[Math.floor(Math.random() * STATIONARY_PLAN.length)]
+    if (b === 'play' && Math.hypot(toyX.get() - x.get(), toyY.get() - y.get()) > 420) b = 'laptop'
+    if (b === lastBehavior.current) b = b === 'laptop' ? 'sleep' : 'laptop'
     lastBehavior.current = b
     return b
   }
@@ -194,7 +227,7 @@ export default function CluelessPet() {
       while (alive(id)) {
         await BEHAVIORS[nextBehavior()](id)
         if (!alive(id)) return
-        await wait(rand(700, 2200))
+        await wait(rand(2000, 5000))
       }
     })()
   }
@@ -203,7 +236,7 @@ export default function CluelessPet() {
   function goSitByChat() {
     const id = ++runId.current
     ;(async () => {
-      await walkTo(id, EDGE + 8, clampY(vh() - catH - 20))
+      await walkTo(id, EDGE + 8, clampY(vh() - catH - 20), CHASE_SPEED)
       if (alive(id)) {
         setFacing('right')
         setPose('happy')
@@ -282,7 +315,7 @@ export default function CluelessPet() {
     ;(async () => {
       await wait(300)
       if (!alive(id)) return
-      await playB(id)
+      await playB(id, CHASE_SPEED)
       if (!alive(id)) return
       chatRef.current ? goSitByChat() : startLoop(600)
     })()
@@ -379,7 +412,7 @@ export default function CluelessPet() {
           </motion.span>
         ))}
 
-        <CluelessCat pose={pose} size={catSize} facing={facing} />
+        <CluelessCat pose={pose} size={catSize} facing={facing} tempo={pose === 'walk' && gait === 'stroll' ? 1.9 : 1} />
       </motion.div>
     </div>
   )
