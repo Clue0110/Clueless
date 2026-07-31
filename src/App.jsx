@@ -12,6 +12,7 @@ import Projects from './sections/Projects'
 import Education from './sections/Education'
 import Contact from './sections/Contact'
 import ResumePage from './pages/ResumePage'
+import RecruiterSite from './pages/RecruiterSite'
 
 const MODE_CLASS = {
   recruiter: 'mode-recruiter',
@@ -20,13 +21,17 @@ const MODE_CLASS = {
 }
 
 function AppContent() {
-  const { theme, mode, isClueless, showResume } = useMode()
+  const { theme, mode, isClueless, isRecruiter, showResume } = useMode()
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-700 ${theme.bg} ${MODE_CLASS[mode]} grain-overlay dot-grid`}
+      // Recruiter mode is deliberately chrome-free: no grain, no dot grid, no
+      // particles — just type on a dark ground.
+      className={`min-h-screen transition-colors duration-700 ${theme.bg} ${MODE_CLASS[mode]} ${
+        isRecruiter ? '' : 'grain-overlay dot-grid'
+      }`}
     >
-      <ParticleField />
+      {!isRecruiter && <ParticleField />}
       <Navbar />
 
       <main className="relative z-10">
@@ -34,6 +39,9 @@ function AppContent() {
           // Clueless mode replaces the whole site with the cat-guided tour
           // (which ends in the JD-match pitch — exclusive to this mode).
           <CluelessWorld key={mode} />
+        ) : isRecruiter ? (
+          // Recruiter mode: the minimal single-column redesign.
+          <RecruiterSite />
         ) : (
           <>
             <Hero />
