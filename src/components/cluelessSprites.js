@@ -23,6 +23,8 @@ export const PALETTE = {
   E: '#2c1a10', // eyes, mouth line
   S: '#ffffff', // eye shine
   N: '#ef6d94', // nose, tongue, hearts
+  G: '#8b95a5', // laptop shell
+  K: '#39445a', // laptop screen / dark metal
 }
 
 const mirrored = (half) => half.map((row) => row + [...row].reverse().join(''))
@@ -122,6 +124,7 @@ const TAIL_UP_B = [
 const TAIL_UP_AT = 16
 
 const TAIL_LOW = ['............................DD..', '..........................DDD...']
+const TAIL_LOW_B = ['.............................DD.', '..........................DDDD..']
 const TAIL_LOW_AT = 21
 
 // ── Arms ────────────────────────────────────────────────────────────────────
@@ -163,6 +166,42 @@ const ARMS_UP = [
   '.XBBX......................XBBX.',
 ]
 
+// Batting at a toy on the ground — two frames of a low right-arm swipe.
+const ARM_PLAY_A = [
+  '..........................XXXX..',
+  '.........................XBBWWX.',
+  '..........................XXXX..',
+]
+
+const ARM_PLAY_B = [
+  '...........................XXXX.',
+  '..........................XBBWWX',
+  '...........................XXXX.',
+]
+
+// ── Props ───────────────────────────────────────────────────────────────────
+
+// Mini laptop, lid toward the viewer (the cat stares at the screen side).
+const LAPTOP = [
+  '.........XXXXXXXXXXXXXX.........',
+  '.........XKKKKKKKKKKKKX.........',
+  '.........XKKKKKWWKKKKKX.........',
+  '.........XKKKKKKKKKKKKX.........',
+  '.........XGGGGGGGGGGGGX.........',
+  '........XXXXXXXXXXXXXXXX........',
+]
+
+// Paws resting on the laptop's top edge, alternating for a typing shuffle.
+const PAWS_TYPE_A = ['...........WWW......WWW.........']
+const PAWS_TYPE_B = ['..........WWW......WWW..........']
+
+// A little "achoo" spray of droplets in front of the muzzle.
+const SNEEZE_SPRAY = [
+  '.............W..W...............',
+  '............W..W..W.............',
+  '.............W..W...............',
+]
+
 // ── Faces ───────────────────────────────────────────────────────────────────
 // Eyes and mouths are authored as 12-column left halves so any pair of eyes
 // composes with any mouth. Eyes fill face rows 0-4, the nose row is fixed, and
@@ -182,6 +221,8 @@ const EYES = {
   // saucer eyes
   wide: ['...EEEEE....', '..ESSEEEE...', '..EEEEEEE...', '..EEEEEEE...', '...EEEEE....'],
   heart: ['...NN.NN....', '...NNNNN....', '...NNNNN....', '....NNN.....', '.....N......'],
+  // spun-around X eyes
+  dizzy: ['...E...E....', '....E.E.....', '.....E......', '....E.E.....', '...E...E....'],
 }
 
 const NOSE = ['.........WWN']
@@ -213,19 +254,23 @@ const FACES = {
   focused: face('sleepy', 'smile'),
   asleep: face('arc', 'small'),
   love: face('heart', 'grin'),
+  bored: face('sleepy', 'small'),
+  dizzy: face('dizzy', 'small'),
 }
 
 const FACE_AT = [4, 7]
 
 // ── Frame assembly ──────────────────────────────────────────────────────────
 
-function build({ face: faceName = 'happy', tail = TAIL_UP_A, tailAt = TAIL_UP_AT, paws = PAWS_DOWN, pawsAt = 21, arm = null, armAt = 0 }) {
+function build({ face: faceName = 'happy', tail = TAIL_UP_A, tailAt = TAIL_UP_AT, paws = PAWS_DOWN, pawsAt = 21, arm = null, armAt = 0, extras = [] }) {
   let out = SIT
   if (tail) out = overlay(out, tail, 0, tailAt)
   if (paws) out = overlay(out, paws, 0, pawsAt)
   out = overlay(out, BLUSH, 0, BLUSH_AT)
   out = overlay(out, FACES[faceName], FACE_AT[0], FACE_AT[1])
   if (arm) out = overlay(out, arm, 0, armAt)
+  // Props (laptop, sneeze spray, play swipes) land last, over everything.
+  for (const [patch, ox, oy] of extras) out = overlay(out, patch, ox, oy)
   return out
 }
 
@@ -300,6 +345,55 @@ export const POSES = {
       build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
       build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
       build({ face: 'happyBlink', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+    ],
+  },
+  // Half-lidded stare into the middle distance; only the tail tip flicks.
+  bored: {
+    ms: 850,
+    frames: [
+      build({ face: 'bored', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+      build({ face: 'bored', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT }),
+    ],
+  },
+  // Hunched over a mini laptop, paws shuffling on the lid edge.
+  laptop: {
+    ms: 380,
+    frames: [
+      build({ face: 'focused', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_A, 0, 17]] }),
+      build({ face: 'focused', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_B, 0, 17]] }),
+    ],
+  },
+  // Scrunch… scrunch… ACHOO (droplet spray).
+  sneeze: {
+    ms: 280,
+    frames: [
+      build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+      build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+      build({ face: 'joy', tail: TAIL_UP_B, extras: [[SNEEZE_SPRAY, 0, 15]] }),
+    ],
+  },
+  // Batting at a toy on the floor.
+  play: {
+    ms: 180,
+    frames: [
+      build({ face: 'excited', extras: [[ARM_PLAY_A, 0, 19]] }),
+      build({ face: 'excited', tail: TAIL_UP_B, extras: [[ARM_PLAY_B, 0, 20]] }),
+    ],
+  },
+  // Spun around too much — X eyes, everything droops.
+  dizzy: {
+    ms: 320,
+    frames: [
+      build({ face: 'dizzy', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+      build({ face: 'dizzy', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT }),
+    ],
+  },
+  // Picked up mid-air: saucer eyes, paws out, tail hanging.
+  held: {
+    ms: 500,
+    frames: [
+      build({ face: 'curious', arm: ARMS_UP, armAt: 7, tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+      build({ face: 'curious', arm: ARMS_UP, armAt: 8, tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT }),
     ],
   },
 }

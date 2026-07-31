@@ -16,15 +16,10 @@ const PLACEHOLDER = {
   clueless: 'ask me about sai!',
 }
 
-const LAUNCH_LABEL = {
-  recruiter: 'Ask me anything',
-  developer: 'ask me',
-  clueless: 'talk to me!',
-}
-
+// The window is opened by tapping the roaming pet (CluelessPet) — there is no
+// launcher button here anymore, just the chat window itself.
 export default function CluelessChat() {
-  const { theme, mode } = useMode()
-  const [open, setOpen] = useState(false)
+  const { theme, mode, showChat: open, setShowChat } = useMode()
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const [messages, setMessages] = useState([])
@@ -99,7 +94,7 @@ export default function CluelessChat() {
                 <span className={`font-semibold ${theme.text}`}>Clueless</span>
               </div>
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => setShowChat(false)}
                 aria-label="Close chat"
                 className={`-mr-1 flex h-10 w-10 items-center justify-center rounded-full ${theme.muted} hover:opacity-70`}
               >
@@ -148,14 +143,6 @@ export default function CluelessChat() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className={`ml-auto flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 shadow-lg ${theme.card} ${theme.border} hover:opacity-90`}
-      >
-        <Clueless pose={busy ? 'read' : open ? 'happy' : 'wave'} size={22} label={false} />
-        {!open && <span className={`text-sm font-medium ${theme.text}`}>{LAUNCH_LABEL[mode]}</span>}
-      </button>
     </div>
   )
 }

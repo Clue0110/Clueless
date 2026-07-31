@@ -7,7 +7,7 @@ import { PALETTE, POSES, COLS, ROWS } from './cluelessSprites'
 // lean) that the frames don't cover.
 //
 // Poses: idle | happy | walk | wave | point | read | celebrate | wink | curious
-//        | love | sleep
+//        | love | sleep | bored | laptop | sneeze | play | dizzy | held
 // `facing`: 'right' (default) or 'left' — flips the sprite horizontally.
 
 // Whole-body motion per pose. The frames carry the expression; this carries the
@@ -24,6 +24,12 @@ const BODY_ANIM = {
   curious: { rotate: [-4, 4, -4], transition: { duration: 2.6, repeat: Infinity, ease: 'easeInOut' } },
   love: { y: [0, -4, 0], scale: [1, 1.04, 1], transition: { duration: 0.9, repeat: Infinity, ease: 'easeInOut' } },
   sleep: { y: 2, transition: { duration: 0.6 } },
+  bored: { y: [0, -0.8, 0], transition: { duration: 3.2, repeat: Infinity, ease: 'easeInOut' } },
+  laptop: { y: [0, -0.8, 0], transition: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' } },
+  sneeze: { rotate: [0, -2, -3, 6, 0], y: [0, -1, -2, 3, 0], transition: { duration: 0.85, repeat: Infinity, ease: 'easeInOut' } },
+  play: { y: [0, -4, 0], rotate: [0, 2, 0], transition: { duration: 0.36, repeat: Infinity, ease: 'easeOut' } },
+  dizzy: { rotate: [-6, 6, -6], x: [-2, 2, -2], transition: { duration: 0.9, repeat: Infinity, ease: 'easeInOut' } },
+  held: { rotate: [-4, 4, -4], transition: { duration: 1.1, repeat: Infinity, ease: 'easeInOut' } },
 }
 
 // Each frame's <rect> list is identical for the life of the page, so build it

@@ -6,6 +6,7 @@ import Hero from './sections/Hero'
 import About from './sections/About'
 import CluelessWorld from './sections/CluelessWorld'
 import CluelessChat from './components/CluelessChat'
+import CluelessPet from './components/CluelessPet'
 import Experience from './sections/Experience'
 import Projects from './sections/Projects'
 import Education from './sections/Education'
@@ -49,9 +50,14 @@ function AppContent() {
         {showResume && <ResumePage />}
       </AnimatePresence>
 
-      {/* The launcher is fixed at z-50, same as the resume overlay, so it floats
-          over the resume content — hide it while the resume is open. */}
-      {!isClueless && !showResume && <CluelessChat />}
+      {/* The roaming pet lives in every mode. Tapping it opens the chat window;
+          both hide while the resume overlay (z-50) is up. */}
+      {!showResume && (
+        <>
+          <CluelessPet />
+          <CluelessChat />
+        </>
+      )}
     </div>
   )
 }

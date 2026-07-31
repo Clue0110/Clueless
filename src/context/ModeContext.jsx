@@ -80,6 +80,9 @@ export function ModeProvider({ children }) {
     return MODES.RECRUITER
   })
   const [showResume, setShowResume] = useState(false)
+  // The chat window is opened by tapping the roaming pet (CluelessPet), so the
+  // open state lives here where both components can reach it.
+  const [showChat, setShowChat] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('portfolio-mode', mode)
@@ -95,7 +98,7 @@ export function ModeProvider({ children }) {
 
   return (
     <ModeContext.Provider
-      value={{ mode, setMode, toggleMode, isRecruiter, isDev, isClueless, theme, showResume, setShowResume }}
+      value={{ mode, setMode, toggleMode, isRecruiter, isDev, isClueless, theme, showResume, setShowResume, showChat, setShowChat }}
     >
       {children}
     </ModeContext.Provider>
