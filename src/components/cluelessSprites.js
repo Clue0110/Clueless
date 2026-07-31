@@ -85,18 +85,6 @@ const BLUSH_AT = 10
 
 const PAWS_DOWN = ['........WWWW........WWWW........', '........WWWW........WWWW........']
 
-const PAWS_STEP_L = [
-  '........WWWW....................',
-  '........WWWW........WWWW........',
-  '....................WWWW........',
-]
-
-const PAWS_STEP_R = [
-  '....................WWWW........',
-  '........WWWW........WWWW........',
-  '........WWWW....................',
-]
-
 // ── Tails ───────────────────────────────────────────────────────────────────
 // A tail held high is the whole "happy to see you" tell, so idle/wave/cheer keep
 // it up and only point/read/sleep drop it.
@@ -216,8 +204,12 @@ const EYES = {
   arc: ['............', '.....EE.....', '....E..E....', '...E....E...', '............'],
   // star-struck
   sparkle: ['....EEE.....', '...ESSSE....', '...ESSSE....', '...EEEEE....', '....EEE.....'],
-  // half-lidded, looking down at something
+  // half-lidded — a hard flat top edge reads as an angry brow, so this is only
+  // for 'bored', where that's the point.
   sleepy: ['............', '............', '...EEEEE....', '...EEEEE....', '....EEE.....'],
+  // Eyes cast down at something in front of the cat: the round top and the
+  // catchlight keep it reading as concentration rather than a scowl.
+  down: ['............', '....EEE.....', '...ESSEE....', '...EEEEE....', '....EEE.....'],
   // saucer eyes
   wide: ['...EEEEE....', '..ESSEEEE...', '..EEEEEEE...', '..EEEEEEE...', '...EEEEE....'],
   heart: ['...NN.NN....', '...NNNNN....', '...NNNNN....', '....NNN.....', '.....N......'],
@@ -252,6 +244,7 @@ const FACES = {
   excited: face('sparkle', 'grin'),
   curious: face('wide', 'small'),
   focused: face('sleepy', 'smile'),
+  working: face('down', 'smile'),
   asleep: face('arc', 'small'),
   love: face('heart', 'grin'),
   bored: face('sleepy', 'small'),
@@ -265,6 +258,10 @@ const FACE_AT = [4, 7]
 // get proper full bodies — head, torso, four legs, tail — drawn facing right
 // and bottom-aligned with the sit rig so pose switches don't hop.
 
+// The head sits above and forward of the back rather than in line with it —
+// a head merged flat into the torso is what made the old rig read as a weasel.
+// The four legs stay at fixed x and alternate by diagonal pairs (a trot): the
+// lifted pair's paw stops a row short of the ground.
 const WALK_A = [
   '................................',
   '................................',
@@ -272,24 +269,24 @@ const WALK_A = [
   '................................',
   '................................',
   '................................',
-  '................................',
-  '................XX....XX........',
-  '...............XBBX..XBBX.......',
-  '...............XBPBXXBPBX.......',
-  '..............XBBBBBBBBBBBBX....',
-  '..............XBBDBBDBBBBBBX....',
-  '..DD..........XBBBBBBESBBBBX....',
-  '..DD..........XBBBBBBEEBWWNX....',
-  '...DD.........XBBBBBBPPBWWWX....',
-  '...DD.........XBBBBBBBBBBBBX....',
-  '....DDXXXXXXXXBBBBBBBBBBBBBX....',
-  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
-  '...XBBDBBBDBBBBBBBBBBBBBBBBX....',
-  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
-  '....XBBBBBBBBBBBBBBBBBBBBBX.....',
-  '.....XBBX.XBBX....XBBX.XBBX.....',
-  '.....XBBX.XBBX....XBBX.XBBX.....',
-  '.....XWWX.XWWX....XWWX.XWWX.....',
+  '....................XX...XX.....',
+  '...................XBBX.XBBX....',
+  '..................XBBBBBBBBBX...',
+  '..................XBBDBBBBBBX...',
+  '..................XBBBBBESBBX...',
+  '..................XBBBBBEEBBX...',
+  '.DD...............XBBBBBBWWNX...',
+  '.DD...XXXXXXXXXXXXXBBBBBBWEWX...',
+  '.DD..XBBBBBBBBBBBBBBBBBBBBBBX...',
+  '.DD.XBBBBBBBBBBBBBBBBBBBBBBX....',
+  '..DDXBBBBBBBBBBBBBBBXXXXXXX.....',
+  '..DDXBBBBBBBBBBBBBBBX...........',
+  '....XBBDBBBDBBBBBBBBX...........',
+  '.....XBBBBBBBBBBBBBBX...........',
+  '.....XBBX.XBBX.XBBX.XBBX........',
+  '.....XBBX.XBBX.XBBX.XBBX........',
+  '.....XBBX.XWWX.XBBX.XWWX........',
+  '.....XWWX......XWWX.............',
 ]
 
 const WALK_B = [
@@ -299,24 +296,24 @@ const WALK_B = [
   '................................',
   '................................',
   '................................',
-  '................................',
-  '................XX....XX........',
-  '...............XBBX..XBBX.......',
-  '...............XBPBXXBPBX.......',
-  '..............XBBBBBBBBBBBBX....',
-  '..............XBBDBBDBBBBBBX....',
-  '...DD.........XBBBBBBESBBBBX....',
-  '...DD.........XBBBBBBEEBWWNX....',
-  '....DD........XBBBBBBPPBWWWX....',
-  '....DD........XBBBBBBBBBBBBX....',
-  '.....DXXXXXXXXBBBBBBBBBBBBBX....',
-  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
-  '...XBBDBBBDBBBBBBBBBBBBBBBBX....',
-  '...XBBBBBBBBBBBBBBBBBBBBBBBX....',
-  '....XBBBBBBBBBBBBBBBBBBBBBX.....',
-  '....XBBX...XBBX..XBBX...XBBX....',
-  '....XBBX...XBBX..XBBX...XBBX....',
-  '....XWWX...XWWX..XWWX...XWWX....',
+  '....................XX...XX.....',
+  '...................XBBX.XBBX....',
+  '..................XBBBBBBBBBX...',
+  '..................XBBDBBBBBBX...',
+  '..................XBBBBBESBBX...',
+  '..................XBBBBBEEBBX...',
+  '..DD..............XBBBBBBWWNX...',
+  '..DD..XXXXXXXXXXXXXBBBBBBWEWX...',
+  '..DD.XBBBBBBBBBBBBBBBBBBBBBBX...',
+  '..DDXBBBBBBBBBBBBBBBBBBBBBBX....',
+  '..DDXBBBBBBBBBBBBBBBXXXXXXX.....',
+  '..DDXBBBBBBBBBBBBBBBX...........',
+  '....XBBDBBBDBBBBBBBBX...........',
+  '.....XBBBBBBBBBBBBBBX...........',
+  '.....XBBX.XBBX.XBBX.XBBX........',
+  '.....XBBX.XBBX.XBBX.XBBX........',
+  '.....XWWX.XBBX.XWWX.XBBX........',
+  '..........XWWX......XWWX........',
 ]
 
 // Curled up on its side, eyes shut; the tail tip flicks between frames.
@@ -468,8 +465,8 @@ export const POSES = {
   laptop: {
     ms: 380,
     frames: [
-      build({ face: 'focused', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_A, 0, 17]] }),
-      build({ face: 'focused', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_B, 0, 17]] }),
+      build({ face: 'working', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_A, 0, 17]] }),
+      build({ face: 'working', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_B, 0, 17]] }),
     ],
   },
   // Scrunch… scrunch… ACHOO (droplet spray).
