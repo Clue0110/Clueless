@@ -16,7 +16,7 @@ function RecruiterExperienceRow({ job }) {
   const hidden = bullets.length - 3
 
   return (
-    <motion.div variants={fadeInUp} className="grid gap-2 sm:grid-cols-[160px_1fr] sm:gap-8">
+    <motion.div variants={fadeInUp} className="grid gap-2 sm:grid-cols-[200px_1fr] sm:gap-10">
       <div className="pt-1">
         <div className="font-mono text-xs leading-5 text-slate-500">{job.period}</div>
         <div className="mt-0.5 font-mono text-xs leading-5 text-slate-600">{job.location}</div>
@@ -176,11 +176,14 @@ function ExperienceCard({ job, index }) {
 }
 
 export default function Experience() {
-  const { isRecruiter } = useMode()
+  const { isRecruiter, mode } = useMode()
   return (
-    <Section id="experience" title="Experience" devTitle="work_history">
+    // Keyed by mode: the recruiter/dev layouts are different trees, and children
+    // mounted after the Section's once-only stagger has fired would otherwise
+    // stay stuck in their hidden variant. Remounting re-runs the entrance.
+    <Section key={mode} id="experience" title="Experience" devTitle="work_history">
       {isRecruiter ? (
-        <div className="max-w-3xl space-y-12">
+        <div className="space-y-12">
           {experience.map((job) => (
             <RecruiterExperienceRow key={job.company + job.role} job={job} />
           ))}
