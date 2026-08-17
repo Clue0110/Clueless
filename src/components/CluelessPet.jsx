@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, animate } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import CluelessCat from './CluelessCat'
+import { COLS, ROWS } from './cluelessSprites'
 import { useIsMobile } from '../hooks/useIsMobile'
 
 // The free-roaming desktop pet. Lives in a fixed overlay across all three
-// modes and runs a little life of its own: wanders to random spots, naps,
-// gets bored, hacks on a mini laptop, sneezes, and plays with its yarn ball.
+// modes and runs a little life of its own: wanders to random spots, naps
+// curled up, grooms, eats from its fish bowl, sits in its box, gets bored,
+// hacks on a mini laptop, sneezes, and plays with its yarn ball.
 //
 // Interactions:
 //  - single tap/click  → opens the Clueless chat (the RAG chatbot)
@@ -33,8 +35,9 @@ const vw = () => window.innerWidth
 const vh = () => window.innerHeight
 
 // What it does between outings — mostly hacking on its laptop, playing with
-// the yarn ball, or sleeping; a little boredom and the odd sneeze for flavor.
-const STATIONARY_PLAN = ['laptop', 'sleep', 'play', 'laptop', 'sleep', 'play', 'laptop', 'sneeze', 'bored', 'sleep']
+// the yarn ball, or sleeping, with the rest of a cat's day mixed in: grooming,
+// a snack at the fish bowl, sitting in its box, boredom, the odd sneeze.
+const STATIONARY_PLAN = ['laptop', 'sleep', 'play', 'groom', 'box', 'laptop', 'eat', 'sleep', 'play', 'sneeze', 'groom', 'laptop', 'bored', 'box']
 
 // ── Yarn ball (pixel art, matches the cat's palette) ────────────────────────
 
@@ -62,12 +65,12 @@ function YarnBall({ wiggle }) {
       {TOY_PIXELS.map((row, y) =>
         [...row].map((c, x) =>
           c === '.' ? null : (
-            <rect key={`${x}-${y}`} x={x} y={y} width="1.04" height="1.04" fill={c === 'X' ? '#4a2d0a' : c === 'R' ? '#c2417a' : '#f472b6'} />
+            <rect key={`${x}-${y}`} x={x} y={y} width="1.04" height="1.04" fill={c === 'X' ? '#2a2438' : c === 'R' ? '#d15c8b' : '#f6a5c1'} />
           ),
         ),
       )}
       {/* loose strand */}
-      <rect x="1" y="8" width="4" height="0.8" fill="#f472b6" />
+      <rect x="1" y="8" width="4" height="0.8" fill="#f6a5c1" />
     </motion.svg>
   )
 }
@@ -80,7 +83,7 @@ export default function CluelessPet() {
 
   const catSize = isMobile ? 26 : 34
   const catW = catSize * 2.3
-  const catH = catW * (24 / 32)
+  const catH = catW * (ROWS / COLS)
 
   const [pose, setPose] = useState('idle')
   const [facing, setFacing] = useState('left')
@@ -173,6 +176,25 @@ export default function CluelessPet() {
     if (alive(id)) setPose('idle')
   }
 
+  async function groomB(id) {
+    setPose('groom')
+    await wait(rand(8000, 14000))
+    if (alive(id)) setPose('idle')
+  }
+
+  async function eatB(id) {
+    setPose('eat')
+    await wait(rand(9000, 16000))
+    if (alive(id)) setPose('idle')
+  }
+
+  async function boxB(id) {
+    // If it fits, it sits — and it sits for a while.
+    setPose('box')
+    await wait(rand(20000, 40000))
+    if (alive(id)) setPose('idle')
+  }
+
   async function sneezeB(id) {
     setPose('sneeze')
     await wait(750)
@@ -201,7 +223,7 @@ export default function CluelessPet() {
     if (alive(id)) setPose('idle')
   }
 
-  const BEHAVIORS = { wander: wanderB, idle: idleB, bored: boredB, sleep: sleepB, laptop: laptopB, sneeze: sneezeB, play: playB }
+  const BEHAVIORS = { wander: wanderB, idle: idleB, bored: boredB, sleep: sleepB, laptop: laptopB, sneeze: sneezeB, play: playB, groom: groomB, eat: eatB, box: boxB }
 
   // Stationary lounging by default; when the outing timer fires (~2min) the
   // pet goes for a stroll — or, sometimes, wanders over to its yarn ball.

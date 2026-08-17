@@ -8,6 +8,7 @@ import { PALETTE, POSES, COLS, ROWS } from './cluelessSprites'
 //
 // Poses: idle | happy | walk | wave | point | read | celebrate | wink | curious
 //        | love | sleep | bored | laptop | sneeze | play | dizzy | held
+//        | groom | eat | box
 // `facing`: 'right' (default) or 'left' — flips the sprite horizontally.
 
 // Whole-body motion per pose. The frames carry the expression; this carries the
@@ -30,6 +31,10 @@ const BODY_ANIM = {
   play: { y: [0, -4, 0], rotate: [0, 2, 0], transition: { duration: 0.36, repeat: Infinity, ease: 'easeOut' } },
   dizzy: { rotate: [-6, 6, -6], x: [-2, 2, -2], transition: { duration: 0.9, repeat: Infinity, ease: 'easeInOut' } },
   held: { rotate: [-4, 4, -4], transition: { duration: 1.1, repeat: Infinity, ease: 'easeInOut' } },
+  groom: { rotate: [0, -2, 0], transition: { duration: 1.6, repeat: Infinity, ease: 'easeInOut' } },
+  eat: { y: [0, -0.8, 0], transition: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } },
+  // A box shouldn't bounce; the blink frames carry the life.
+  box: { y: [0, -0.5, 0], transition: { duration: 3.4, repeat: Infinity, ease: 'easeInOut' } },
 }
 
 // Each frame's <rect> list is identical for the life of the page, so build it
@@ -96,7 +101,7 @@ export default function CluelessCat({ pose = 'idle', size = 40, facing = 'right'
       {pose === 'sleep' && (
         <motion.span
           className="absolute top-1/4 left-1/4 font-mono text-sm font-bold"
-          style={{ color: PALETTE.B }}
+          style={{ color: '#8b95a5' }}
           animate={{ opacity: [0, 1, 0], y: [6, -6] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
         >

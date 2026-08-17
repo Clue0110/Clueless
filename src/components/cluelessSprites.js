@@ -1,30 +1,33 @@
 // Pixel-art sprite data for the Clueless cat, kept out of the component so the
 // art can be previewed by tooling without pulling in React.
 //
-// Everything is a 32×24 grid of palette letters ('.' = transparent). The body is
-// drawn as a 16-column left half and mirrored, which keeps it symmetric by
-// construction. Face, blush, arms and tail are separate overlay patches, so a
-// new emotion costs a few rows of eyes or mouth rather than a whole redraw.
+// The style is chibi line-art (after ivonchee's f2u cat bases): a white cat
+// with a thin dark outline, small wide-set dot eyes and a tiny mouth — no
+// shading, just silhouette. Color only appears in small accents (pink ears,
+// tongue, hearts) and props.
 //
-// Layout: ears rows 0-4, head rows 4-15 (cols 4-27), body rows 16-23 (cols
-// 6-25). Columns 0-3 and 28-31 are deliberately kept clear so raised paws and
-// the tail have somewhere to go. The face patch lands at (4, 7) — eyes fill its
-// first five rows, the nose and mouth the last four.
+// Everything is a 32×28 grid of palette letters ('.' = transparent). The
+// sitting cat is drawn as a 16-column left half and mirrored, which keeps it
+// symmetric by construction. Face, arms, tail and props are separate overlay
+// patches, so a new emotion costs a few rows of eyes or mouth rather than a
+// whole redraw.
+//
+// Sit-rig layout: ears rows 0-4, head rows 4-14 (cols 3-28), body rows 14-27
+// (cols 5-26). Columns 27-31 stay clear for the tail; 0-2 for raised paws.
+// The face patch lands at (4, 8) — eyes in its first four rows, mouth in the
+// last two.
 
 export const COLS = 32
-export const ROWS = 24
+export const ROWS = 28
 
 export const PALETTE = {
-  X: '#4a2d0a', // outline
-  B: '#f6b445', // fur
-  D: '#d1861c', // dark fur — stripes, tail
-  W: '#fff4de', // cream — muzzle, paws
-  P: '#f79ab0', // pink — inner ear, blush
-  E: '#2c1a10', // eyes, mouth line
-  S: '#ffffff', // eye shine
-  N: '#ef6d94', // nose, tongue, hearts
-  G: '#8b95a5', // laptop shell
-  K: '#39445a', // laptop screen / dark metal
+  X: '#2a2438', // outline
+  E: '#2a2438', // eyes, mouth (same ink as the outline)
+  W: '#faf7f0', // fur + white props
+  S: '#ffffff', // eye glint
+  P: '#f6a5c1', // pink — inner ear, tongue, blush, droplets
+  N: '#ef6d94', // deep pink — hearts, fish, yarn
+  K: '#39445a', // laptop lid logo / screen dark
 }
 
 const mirrored = (half) => half.map((row) => row + [...row].reverse().join(''))
@@ -45,248 +48,335 @@ const overlay = (base, patch, ox, oy) =>
       .join('')
   })
 
-// ── Body ────────────────────────────────────────────────────────────────────
-// Paw rows are left as plain fur and stamped from PAWS_* so the walk cycle can
-// lift them independently of the body.
+// ── Body (front-facing sit) ─────────────────────────────────────────────────
+// One continuous blob — cheeks widest, a slight neck pinch, haunches flaring
+// back out. No line between head and body; the pinch and the face imply it.
 
 const SIT_HALF = [
-  '......XX........',
-  '.....XBBX.......',
-  '....XBPPBX......',
-  '....XBPPPBX.....',
-  '....XBPPPBBXXXXX',
-  '....XBBDBBBBDBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '....XBBBBBBBBBBB',
-  '.....XBBBBBBBBBB',
-  '......XBBBBBBBBB',
-  '......XBBBBBBBBB',
-  '......XBDBBBBBBB',
-  '......XBBBBBBBBB',
-  '......XBDBBBBBBB',
-  '......XBBBBBBBBB',
-  '......XBBBBBBBBB',
-  '......XXXXXXXXXX',
+  '.......XX.......',
+  '......XWWX......',
+  '......XWPPX.....',
+  '.....XWWPPWX....',
+  '.....XWWWWWXXXXX',
+  '....XWWWWWWWWWWW',
+  '....XWWWWWWWWWWW',
+  '...XWWWWWWWWWWWW',
+  '...XWWWWWWWWWWWW',
+  '...XWWWWWWWWWWWW',
+  '...XWWWWWWWWWWWW',
+  '...XWWWWWWWWWWWW',
+  '....XWWWWWWWWWWW',
+  '....XWWWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '......XWWWWWWWWW',
+  '......XWWWWWWWWW',
+  '......XWWWWWWWWW',
+  '......XWWWWWWWWW',
+  '......XWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '.....XWWWWWWWWWW',
+  '......XWWWWWWWWW',
+  '.......XXXXXXXXX',
 ]
 
 const SIT = mirrored(SIT_HALF)
 
-const BLUSH = ['.....PP..................PP.....', '.....PP..................PP.....']
-const BLUSH_AT = 10
+// Front-paw slits: two short lines at the bottom edge splitting the base into
+// paws, like the reference's hinted front legs.
+const PAWS_DOWN = mirrored(['.............X..', '.............X..'])
+const PAWS_AT = 25
 
-// ── Paws ────────────────────────────────────────────────────────────────────
-
-const PAWS_DOWN = ['........WWWW........WWWW........', '........WWWW........WWWW........']
+const BLUSH = ['......PP................PP......']
+const BLUSH_AT = 11
 
 // ── Tails ───────────────────────────────────────────────────────────────────
-// A tail held high is the whole "happy to see you" tell, so idle/wave/cheer keep
-// it up and only point/read/sleep drop it.
+// Long and expressive — the reference cats' tails are half the charm. Upright
+// with a sway for happy poses; lying on the ground for calm/droopy ones.
 
 const TAIL_UP_A = [
-  '...........................DD...',
-  '............................DD..',
-  '............................DD..',
-  '............................DD..',
-  '............................DD..',
-  '...........................DD...',
-  '..........................DD....',
-]
-
-const TAIL_UP_B = [
-  '............................DD..',
-  '.............................DD.',
-  '.............................DD.',
-  '............................DD..',
-  '............................DD..',
-  '...........................DD...',
-  '..........................DD....',
-]
-
-const TAIL_UP_AT = 16
-
-const TAIL_LOW = ['............................DD..', '..........................DDD...']
-const TAIL_LOW_B = ['.............................DD.', '..........................DDDD..']
-const TAIL_LOW_AT = 21
-
-// ── Arms ────────────────────────────────────────────────────────────────────
-
-const ARM_WAVE_UP = [
-  '.............................XX.',
-  '............................XWWX',
-  '............................XWWX',
-  '............................XWWX',
-  '............................XBBX',
-  '............................XBBX',
-  '...........................XBBX.',
-]
-
-const ARM_WAVE_DOWN = [
   '............................XX..',
   '...........................XWWX.',
   '...........................XWWX.',
   '...........................XWWX.',
-  '...........................XBBX.',
-  '...........................XBBX.',
-  '..........................XBBX..',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '..........................XWWX..',
+  '..........................XWWX..',
+  '..........................XWWX..',
+  '..........................XXXX..',
+]
+
+const TAIL_UP_B = [
+  '.............................XX.',
+  '............................XWWX',
+  '............................XWWX',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '..........................XWWX..',
+  '..........................XWWX..',
+  '..........................XWWX..',
+  '..........................XXXX..',
+]
+
+const TAIL_UP_AT = 11
+
+const TAIL_LOW = [
+  '..........................XXXXX.',
+  '.........................XWWWWWX',
+  '..........................XXXXX.',
+]
+const TAIL_LOW_AT = 25
+
+const TAIL_LOW_B = [
+  '.............................XX.',
+  '..........................XXXWWX',
+  '.........................XWWWWX.',
+  '..........................XXXX..',
+]
+const TAIL_LOW_B_AT = 24
+
+// ── Arms ────────────────────────────────────────────────────────────────────
+
+const ARM_WAVE_UP = [
+  '...........................XXX..',
+  '..........................XWWWX.',
+  '..........................XWWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '..........................XWWX..',
+  '..........................XWWX..',
+]
+
+const ARM_WAVE_DOWN = [
+  '............................XXX.',
+  '...........................XWWWX',
+  '...........................XWWWX',
+  '...........................XWWX.',
+  '...........................XWWX.',
+  '..........................XWWX..',
+  '..........................XWWX..',
 ]
 
 const ARM_POINT = [
-  '..........................XXXXXX',
-  '..........................BBBWWX',
-  '..........................BBBWWX',
-  '..........................XXXXXX',
+  '..........................XXXXX.',
+  '..........................WWWWWX',
+  '..........................XXXXX.',
 ]
 
-const ARMS_UP = [
-  '.XX..........................XX.',
-  'XWWX........................XWWX',
-  'XWWX........................XWWX',
-  'XWWX........................XWWX',
-  'XBBX........................XBBX',
-  'XBBX........................XBBX',
-  '.XBBX......................XBBX.',
-]
+// Raised in a V from the shoulders. The inner edge always lands on the body's
+// own outline column so the arm reads as a separate limb, not a white bridge.
+const ARMS_UP = mirrored([
+  '.XX.............',
+  'XWWX............',
+  'XWWX............',
+  'XWWX............',
+  'XWWX............',
+  '.XWWX...........',
+  '..XWWX..........',
+  '...XWWX.........',
+  '....XXX.........',
+])
 
 // Batting at a toy on the ground — two frames of a low right-arm swipe.
 const ARM_PLAY_A = [
   '..........................XXXX..',
-  '.........................XBBWWX.',
+  '.........................XWWWWX.',
   '..........................XXXX..',
 ]
 
 const ARM_PLAY_B = [
   '...........................XXXX.',
-  '..........................XBBWWX',
+  '..........................XWWWWX',
   '...........................XXXX.',
 ]
 
+// Foreleg raised across the chest to the mouth, fully outlined so it reads
+// against the white body. Two heights for the lick-lick loop.
+const ARM_GROOM_A = [
+  '..................XXXX..........',
+  '..................XWWX..........',
+  '..................XWWX..........',
+  '...................XWWX.........',
+  '....................XWWX........',
+  '.....................XWWX.......',
+  '......................XXX.......',
+]
+
+const ARM_GROOM_B = ARM_GROOM_A
+
+const TONGUE = ['...............PP...............']
+const TONGUE_AT = 14
+
 // ── Props ───────────────────────────────────────────────────────────────────
 
-// Mini laptop, lid toward the viewer (the cat stares at the screen side).
+// Open laptop, lid back toward the viewer, little glowing logo on the lid.
 const LAPTOP = [
   '.........XXXXXXXXXXXXXX.........',
-  '.........XKKKKKKKKKKKKX.........',
-  '.........XKKKKKWWKKKKKX.........',
-  '.........XKKKKKKKKKKKKX.........',
-  '.........XGGGGGGGGGGGGX.........',
+  '.........XWWWWWWWWWWWWX.........',
+  '.........XWWWWWKKWWWWWX.........',
+  '.........XWWWWWWWWWWWWX.........',
+  '.........XWWWWWWWWWWWWX.........',
   '........XXXXXXXXXXXXXXXX........',
 ]
+const LAPTOP_AT = 21
 
-// Paws resting on the laptop's top edge, alternating for a typing shuffle.
-const PAWS_TYPE_A = ['...........WWW......WWW.........']
-const PAWS_TYPE_B = ['..........WWW......WWW..........']
+// Paws hooked over the lid's top edge, alternating for a typing shuffle.
+const PAWS_TYPE_A = ['..........XWWX......XWWX........', '..........XWWX......XWWX........']
+const PAWS_TYPE_B = ['...........XWWX....XWWX.........', '...........XWWX....XWWX.........']
+const PAWS_TYPE_AT = 20
 
-// A little "achoo" spray of droplets in front of the muzzle.
+// A little "achoo" spray in front of the muzzle (pink so it shows on fur).
 const SNEEZE_SPRAY = [
-  '.............W..W...............',
-  '............W..W..W.............',
-  '.............W..W...............',
+  '............P..P..P.............',
+  '..............P..P..............',
 ]
+
+// Cardboard-style box (drawn white, like the reference's line-art box): rim,
+// plain front face, and two flaps folded out at the sides.
+const BOX_FRONT = [
+  '...XXXXXXXXXXXXXXXXXXXXXXXXXX...',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XWWWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '..XXXXXXXXXXXXXXXXXXXXXXXXXXXX..',
+]
+const BOX_AT = 14
+
+const BOX_FLAPS = mirrored([
+  '.XX.............',
+  'XW..............',
+  'XW..............',
+  'XX..............',
+])
+const BOX_FLAPS_AT = 15
+
+// Paws hooked over the box rim.
+const PAWS_RIM = mirrored([
+  '.........XXXX...',
+  '.........XWWX...',
+  '.........XWWX...',
+  '.........XXXX...',
+])
+const PAWS_RIM_AT = 13
 
 // ── Faces ───────────────────────────────────────────────────────────────────
 // Eyes and mouths are authored as 12-column left halves so any pair of eyes
-// composes with any mouth. Eyes fill face rows 0-4, the nose row is fixed, and
-// the mouth fills rows 6-8.
+// composes with any mouth. The patch is six rows: eyes fill rows 0-3, the
+// mouth rows 4-5. Dot eyes sit wide apart, reference-style.
 
 const EYES = {
-  // wide open with a shine — the default, and the reason the cat reads friendly
-  open: ['....EEE.....', '...ESSEE....', '...EEEEE....', '...EEEEE....', '....EEE.....'],
+  // small round dot — the default; nearly all the reference cats have these
+  open: ['............', '.....EE.....', '.....EE.....', '............'],
   // mid-blink
-  blink: ['............', '............', '...EEEEE....', '............', '............'],
+  blink: ['............', '............', '.....EE.....', '............'],
   // squeezed-shut happy arcs (∩ ∩)
-  arc: ['............', '.....EE.....', '....E..E....', '...E....E...', '............'],
-  // star-struck
-  sparkle: ['....EEE.....', '...ESSSE....', '...ESSSE....', '...EEEEE....', '....EEE.....'],
-  // half-lidded — a hard flat top edge reads as an angry brow, so this is only
-  // for 'bored', where that's the point.
-  sleepy: ['............', '............', '...EEEEE....', '...EEEEE....', '....EEE.....'],
-  // Eyes cast down at something in front of the cat: the round top and the
-  // catchlight keep it reading as concentration rather than a scowl.
-  down: ['............', '....EEE.....', '...ESSEE....', '...EEEEE....', '....EEE.....'],
-  // saucer eyes
-  wide: ['...EEEEE....', '..ESSEEEE...', '..EEEEEEE...', '..EEEEEEE...', '...EEEEE....'],
-  heart: ['...NN.NN....', '...NNNNN....', '...NNNNN....', '....NNN.....', '.....N......'],
+  arc: ['............', '.....EE.....', '....E..E....', '............'],
+  // contentedly shut (∪ ∪) — grooming, sleeping upright, pre-sneeze scrunch
+  shut: ['............', '....E..E....', '.....EE.....', '............'],
+  // half-lidded — only for 'bored', where the flat lid is the point
+  sleepy: ['............', '....EEE.....', '.....EE.....', '............'],
+  // cast down at something in front of the cat (laptop, reading)
+  down: ['............', '............', '.....EE.....', '.....EE.....'],
+  // saucer eyes with a glint
+  wide: ['....SEE.....', '....EEE.....', '....EEE.....', '............'],
+  heart: ['....N.N.....', '....NNN.....', '.....N......', '............'],
   // spun-around X eyes
-  dizzy: ['...E...E....', '....E.E.....', '.....E......', '....E.E.....', '...E...E....'],
+  dizzy: ['....E.E.....', '.....E......', '....E.E.....', '............'],
 }
 
-const NOSE = ['.........WWN']
-
-// The cream muzzle stops at the nose row on purpose: a closed smile only reads
-// as a curve if the gap between its raised corners is fur, not more cream.
 const MOUTHS = {
-  smile: ['.........E..', '..........EE', '............'],
+  // tiny ω — raised corners, dipped center
+  smile: ['..........E.', '...........E'],
   // open grin with a tongue
-  grin: ['.........EEE', '.........ENN', '..........EE'],
+  open: ['..........EE', '..........EP'],
   // small neutral 'o'
-  small: ['............', '...........E', '...........E'],
+  small: ['...........E', '...........E'],
+  none: ['............', '............'],
 }
 
 const face = (eyes, mouth, rightEyes) => [
   ...(rightEyes ? halves(EYES[eyes], EYES[rightEyes]) : mirrored(EYES[eyes])),
-  ...mirrored(NOSE),
   ...mirrored(MOUTHS[mouth]),
 ]
 
 const FACES = {
   happy: face('open', 'smile'),
   happyBlink: face('blink', 'smile'),
-  joy: face('arc', 'grin'),
+  joy: face('arc', 'open'),
   joyBlink: face('arc', 'smile'),
-  wink: face('open', 'grin', 'arc'),
-  excited: face('sparkle', 'grin'),
+  wink: face('open', 'smile', 'arc'),
+  excited: face('wide', 'open'),
   curious: face('wide', 'small'),
-  focused: face('sleepy', 'smile'),
-  working: face('down', 'smile'),
-  asleep: face('arc', 'small'),
-  love: face('heart', 'grin'),
-  bored: face('sleepy', 'small'),
+  focused: face('down', 'smile'),
+  working: face('down', 'small'),
+  asleep: face('shut', 'none'),
+  love: face('heart', 'open'),
+  bored: face('sleepy', 'none'),
   dizzy: face('dizzy', 'small'),
+  groom: face('shut', 'small'),
 }
 
-const FACE_AT = [4, 7]
+const FACE_AT = [4, 8]
 
 // ── Side-view rigs ──────────────────────────────────────────────────────────
-// The chibi sit rig above is for stationary poses. Locomotion and lying down
-// get proper full bodies — head, torso, four legs, tail — drawn facing right
-// and bottom-aligned with the sit rig so pose switches don't hop.
+// Locomotion, lying down and eating get proper full bodies — head forward,
+// slim torso, four thin legs, long tail — drawn facing right and
+// bottom-aligned with the sit rig so pose switches don't hop.
 
-// The head sits above and forward of the back rather than in line with it —
-// a head merged flat into the torso is what made the old rig read as a weasel.
-// The four legs stay at fixed x and alternate by diagonal pairs (a trot): the
-// lifted pair's paw stops a row short of the ground.
+// Trot: the legs alternate by diagonal pairs; the lifted pair's paw stops two
+// rows short of the ground.
 const WALK_A = [
   '................................',
   '................................',
   '................................',
   '................................',
   '................................',
-  '................................',
-  '....................XX...XX.....',
-  '...................XBBX.XBBX....',
-  '..................XBBBBBBBBBX...',
-  '..................XBBDBBBBBBX...',
-  '..................XBBBBBESBBX...',
-  '..................XBBBBBEEBBX...',
-  '.DD...............XBBBBBBWWNX...',
-  '.DD...XXXXXXXXXXXXXBBBBBBWEWX...',
-  '.DD..XBBBBBBBBBBBBBBBBBBBBBBX...',
-  '.DD.XBBBBBBBBBBBBBBBBBBBBBBX....',
-  '..DDXBBBBBBBBBBBBBBBXXXXXXX.....',
-  '..DDXBBBBBBBBBBBBBBBX...........',
-  '....XBBDBBBDBBBBBBBBX...........',
-  '.....XBBBBBBBBBBBBBBX...........',
-  '.....XBBX.XBBX.XBBX.XBBX........',
-  '.....XBBX.XBBX.XBBX.XBBX........',
-  '.....XBBX.XWWX.XBBX.XWWX........',
-  '.....XWWX......XWWX.............',
+  '.....................XX....XX...',
+  '....................XWWX..XWWX..',
+  '....................XWWWWWWWWX..',
+  '..XX...............XWWWWWWWWWWX.',
+  '.XWWX..............XWWWWWWWWWWX.',
+  '.XWWX.............XWWWWWWWWWWWWX',
+  '.XWWX.............XWWWWWWWEEWWWX',
+  '.XWWX.............XWWWWWWWEEWWWX',
+  '..XWWX............XWWWWWWWWWWWNX',
+  '..XWWX............XWWWWWWWWWWWWX',
+  '...XWWX...........XWWWWWWWWWWWX.',
+  '....XWWXXXXXXXXXXXWWWWWWWWWWWX..',
+  '....XWWWWWWWWWWWWWWWWWWWWWWWX...',
+  '....XWWWWWWWWWWWWWWWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWX.....',
+  '.....XWWWWWWWWWWWWWWWWWWWWX.....',
+  '.....XWWWWWWWWWWWWWWWWWWWX......',
+  '.....XXWXXXXWXXXXXXWXXXXWX......',
+  '......XWX..XWX....XWX..XWX......',
+  '......XXX..XWX....XXX..XWX......',
+  '...........XWX.........XWX......',
+  '...........XXX.........XXX......',
 ]
 
 const WALK_B = [
@@ -295,28 +385,34 @@ const WALK_B = [
   '................................',
   '................................',
   '................................',
-  '................................',
-  '....................XX...XX.....',
-  '...................XBBX.XBBX....',
-  '..................XBBBBBBBBBX...',
-  '..................XBBDBBBBBBX...',
-  '..................XBBBBBESBBX...',
-  '..................XBBBBBEEBBX...',
-  '..DD..............XBBBBBBWWNX...',
-  '..DD..XXXXXXXXXXXXXBBBBBBWEWX...',
-  '..DD.XBBBBBBBBBBBBBBBBBBBBBBX...',
-  '..DDXBBBBBBBBBBBBBBBBBBBBBBX....',
-  '..DDXBBBBBBBBBBBBBBBXXXXXXX.....',
-  '..DDXBBBBBBBBBBBBBBBX...........',
-  '....XBBDBBBDBBBBBBBBX...........',
-  '.....XBBBBBBBBBBBBBBX...........',
-  '.....XBBX.XBBX.XBBX.XBBX........',
-  '.....XBBX.XBBX.XBBX.XBBX........',
-  '.....XWWX.XBBX.XWWX.XBBX........',
-  '..........XWWX......XWWX........',
+  '.....................XX....XX...',
+  '....................XWWX..XWWX..',
+  '....................XWWWWWWWWX..',
+  '...XX..............XWWWWWWWWWWX.',
+  '..XWWX.............XWWWWWWWWWWX.',
+  '..XWWX............XWWWWWWWWWWWWX',
+  '..XWWX............XWWWWWWWEEWWWX',
+  '..XWWX............XWWWWWWWEEWWWX',
+  '...XWWX...........XWWWWWWWWWWWNX',
+  '...XWWX...........XWWWWWWWWWWWWX',
+  '....XWWX..........XWWWWWWWWWWWX.',
+  '.....XWWXXXXXXXXXXWWWWWWWWWWWX..',
+  '....XWWWWWWWWWWWWWWWWWWWWWWWX...',
+  '....XWWWWWWWWWWWWWWWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWX.....',
+  '.....XWWWWWWWWWWWWWWWWWWWWX.....',
+  '.....XWWWWWWWWWWWWWWWWWWWX......',
+  '.....XXWXXXXWXXXXXXWXXXXWX......',
+  '......XWX..XWX....XWX..XWX......',
+  '......XWX..XXX....XWX..XXX......',
+  '......XWX.........XWX...........',
+  '......XXX.........XXX...........',
 ]
 
-// Curled up on its side, eyes shut; the tail tip flicks between frames.
+// Curled up in a donut: head at the left with a ∪ shut eye under the ears,
+// back mounding up behind, tail wrapping around the front under the chin.
+// Frame B shifts the tail root and tip for a sleepy flick.
 const LIE_A = [
   '................................',
   '................................',
@@ -332,16 +428,20 @@ const LIE_A = [
   '................................',
   '................................',
   '................................',
-  '................................',
-  '......XX..XX....................',
-  '.....XBBXXBBX...................',
-  '.....XBBBBBBXXXXXXXXXXXXXX......',
-  '....XBBBBBBBBBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBBBBBBBBBBBBX....',
-  '....XBBWWPBBBBBBBBBBBBBBBBBX....',
-  '....XBBBBBBBBBBBBBBBBBBDDBBX....',
-  '.....XBBBBBBBBBBBBBBBBDDDBX.....',
-  '......XXXXXXXXXXXXXXXXXXXX......',
+  '....XX..XX......................',
+  '...XWWXXWWX.....................',
+  '...XWWWWWWXXXXXX................',
+  '..XWWWWWWWWWWWWXXXX.............',
+  '..XWWWWWWWWWWWWWWWWXXX..........',
+  '.XWWEWWEWWWWWWWWWWWWWXX.........',
+  '.XWWWEEWWWWWWWWWWWWWWWXX........',
+  '.XWWWWWWWWWWWWWWWWWWWWWWX.......',
+  '.XWWWWWWWWWWWWWWWWWWWWWWWX......',
+  '.XWWWWWWWWWWWWWWWWWWWWWWWX......',
+  '.XWWWWXXXXXXXXXXXXXXXXXWWX......',
+  '.XWWWXWWWWWWWWWWWWWWWWWWWX......',
+  '..XWWWWWWWWWWWWWWWWWWWWWX.......',
+  '...XXXXXXXXXXXXXXXXXXXXX........',
 ]
 
 const LIE_B = [
@@ -359,31 +459,121 @@ const LIE_B = [
   '................................',
   '................................',
   '................................',
+  '....XX..XX......................',
+  '...XWWXXWWX.....................',
+  '...XWWWWWWXXXXXX................',
+  '..XWWWWWWWWWWWWXXXX.............',
+  '..XWWWWWWWWWWWWWWWWXXX..........',
+  '.XWWEWWEWWWWWWWWWWWWWXX.........',
+  '.XWWWEEWWWWWWWWWWWWWWWXX........',
+  '.XWWWWWWWWWWWWWWWWWWWWWWX.......',
+  '.XWWWWWWWWWWWWWWWWWWWWWWWX......',
+  '.XWWWWWWWWWWWWWWWWWWWWWWWX......',
+  '.XWWWWXXXXXXXXXXXXXXXXWWWX......',
+  '.XWWWWXWWWWWWWWWWWWWWWWWWX......',
+  '..XWWWWWWWWWWWWWWWWWWWWWX.......',
+  '...XXXXXXXXXXXXXXXXXXXXX........',
+]
+
+// Eating from a fish bowl on the ground — muzzle dipped to the bowl rim, then
+// head up mid-chew (fish visible again). Walk-rig body, all four paws planted.
+const EAT_A = [
   '................................',
-  '......XX..XX....................',
-  '.....XBBXXBBX...................',
-  '.....XBBBBBBXXXXXXXXXXXXXX......',
-  '....XBBBBBBBBBBBBBBBBBBBBBBX....',
-  '....XBEEBBBBBBBBBBBBBBBBBBBX....',
-  '....XBBWWPBBBBBBBBBBBBBBBBBX....',
-  '....XBBBBBBBBBBBBBBBBBDDBBBX....',
-  '.....XBBBBBBBBBBBBBBBDDDDBX.....',
-  '......XXXXXXXXXXXXXXXXXXXX......',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '......................XX..XX....',
+  '.....................XWWXXWWX...',
+  '.....................XWWWWWWX...',
+  '....................XWWWWWWWWX..',
+  '...XX...............XWWWWWWWWX..',
+  '..XWWX..............XWWWWWWWWWX.',
+  '...XWWXXXXXXXXXXXXXXWWWWWWWWWWX.',
+  '....XWWWWWWWWWWWWWWWWWWWWWWWWX..',
+  '....XWWWWWWWWWWWWWWWWWEEWWWWX...',
+  '....XWWWWWWWWWWWWWWWWWWWWWWWX...',
+  '.....XWWWWWWWWWWWWWWWWWWWWWX....',
+  '.....XXWXXXXWXXXWXXXWXXWWWWX....',
+  '......XWX..XWX.XWX.XWX.XWWX.....',
+  '......XWX..XWX.XWX.XWX.XXXXXX...',
+  '......XWX..XWX.XWX.XWX..XWWWWX..',
+  '......XXX..XXX.XXX.XXX..XXXXXX..',
+]
+
+const EAT_B = [
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '................................',
+  '.....................XX...XX....',
+  '....................XWWX.XWWX...',
+  '....................XWWWWWWWX...',
+  '...................XWWWWWWWWWX..',
+  '...................XWWWWWWWWWX..',
+  '...................XWWWWWEEWWX..',
+  '...................XWWWWWEEWWX..',
+  '...................XWWWWWWWWWX..',
+  '...................XWWWWWWEEWX..',
+  '...XX..............XWWWWWWWWX...',
+  '..XWWX.............XWWWWWWWWX...',
+  '...XWWXXXXXXXXXXXXXWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWWX....',
+  '....XWWWWWWWWWWWWWWWWWWWWWX.....',
+  '.....XWWWWWWWWWWWWWWWWWWWWX.....',
+  '.....XWWWWWWWWWWWWWWWWWWWX......',
+  '.....XXWXXXXWXXXWXXXWXX.........',
+  '......XWX..XWX.XWX.XWX...NN.N...',
+  '......XWX..XWX.XWX.XWX.XXXXXX...',
+  '......XWX..XWX.XWX.XWX..XWWWWX..',
+  '......XXX..XXX.XXX.XXX..XXXXXX..',
 ]
 
 // ── Frame assembly ──────────────────────────────────────────────────────────
 
-function build({ face: faceName = 'happy', tail = TAIL_UP_A, tailAt = TAIL_UP_AT, paws = PAWS_DOWN, pawsAt = 21, arm = null, armAt = 0, extras = [] }) {
+function build({
+  face: faceName = 'happy',
+  tail = TAIL_UP_A,
+  tailAt = TAIL_UP_AT,
+  paws = PAWS_DOWN,
+  pawsAt = PAWS_AT,
+  arm = null,
+  armAt = 0,
+  extras = [],
+}) {
   let out = SIT
   if (tail) out = overlay(out, tail, 0, tailAt)
   if (paws) out = overlay(out, paws, 0, pawsAt)
-  out = overlay(out, BLUSH, 0, BLUSH_AT)
   out = overlay(out, FACES[faceName], FACE_AT[0], FACE_AT[1])
   if (arm) out = overlay(out, arm, 0, armAt)
-  // Props (laptop, sneeze spray, play swipes) land last, over everything.
+  // Props (laptop, box, sneeze spray, play swipes) land last, over everything.
   for (const [patch, ox, oy] of extras) out = overlay(out, patch, ox, oy)
   return out
 }
+
+// The box pose hides the body, so tail and paw slits are dropped before the
+// box lands on top and the paws re-appear hooked over its rim.
+const boxFrame = (faceName) =>
+  build({
+    face: faceName,
+    tail: null,
+    paws: null,
+    extras: [
+      [BOX_FRONT, 0, BOX_AT],
+      [BOX_FLAPS, 0, BOX_FLAPS_AT],
+      [PAWS_RIM, 0, PAWS_RIM_AT],
+    ],
+  })
 
 // Frame sequences per pose. Blinks are deliberately one frame in a long cycle —
 // the cat should look like it's holding a smile, not flickering.
@@ -403,7 +593,7 @@ export const POSES = {
     ms: 340,
     frames: [build({ face: 'joy' }), build({ face: 'joy', tail: TAIL_UP_B })],
   },
-  // Side-view quadruped trot — a whole cat, not a gliding face.
+  // Side-view quadruped trot.
   walk: {
     ms: 150,
     frames: [WALK_A, WALK_B],
@@ -411,15 +601,15 @@ export const POSES = {
   wave: {
     ms: 300,
     frames: [
-      build({ face: 'joy', arm: ARM_WAVE_UP, armAt: 7 }),
-      build({ face: 'joy', arm: ARM_WAVE_DOWN, armAt: 8, tail: TAIL_UP_B }),
+      build({ face: 'joy', arm: ARM_WAVE_UP, armAt: 6 }),
+      build({ face: 'joy', arm: ARM_WAVE_DOWN, armAt: 7, tail: TAIL_UP_B }),
     ],
   },
   point: {
     ms: 900,
     frames: [
-      build({ face: 'happy', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, arm: ARM_POINT, armAt: 17 }),
-      build({ face: 'happyBlink', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, arm: ARM_POINT, armAt: 17 }),
+      build({ face: 'happy', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, arm: ARM_POINT, armAt: 15 }),
+      build({ face: 'happyBlink', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, arm: ARM_POINT, armAt: 15 }),
     ],
   },
   read: {
@@ -432,8 +622,8 @@ export const POSES = {
   celebrate: {
     ms: 200,
     frames: [
-      build({ face: 'excited', arm: ARMS_UP, armAt: 7 }),
-      build({ face: 'excited', arm: ARMS_UP, armAt: 6, tail: TAIL_UP_B }),
+      build({ face: 'excited', arm: ARMS_UP, armAt: 8 }),
+      build({ face: 'excited', arm: ARMS_UP, armAt: 7, tail: TAIL_UP_B }),
     ],
   },
   wink: {
@@ -446,9 +636,12 @@ export const POSES = {
   },
   love: {
     ms: 400,
-    frames: [build({ face: 'love' }), build({ face: 'love', tail: TAIL_UP_B })],
+    frames: [
+      build({ face: 'love', extras: [[BLUSH, 0, BLUSH_AT]] }),
+      build({ face: 'love', tail: TAIL_UP_B, extras: [[BLUSH, 0, BLUSH_AT]] }),
+    ],
   },
-  // Lying on its side, fully out. Tail tip flicks mid-dream.
+  // Curled up in a donut, fully out.
   sleep: {
     ms: 1200,
     frames: [LIE_A, LIE_A, LIE_B],
@@ -458,15 +651,27 @@ export const POSES = {
     ms: 850,
     frames: [
       build({ face: 'bored', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-      build({ face: 'bored', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT }),
+      build({ face: 'bored', tail: TAIL_LOW_B, tailAt: TAIL_LOW_B_AT }),
     ],
   },
-  // Hunched over a mini laptop, paws shuffling on the lid edge.
+  // Hunched behind a mini laptop, paws shuffling on the lid edge.
   laptop: {
     ms: 380,
     frames: [
-      build({ face: 'working', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_A, 0, 17]] }),
-      build({ face: 'working', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT, extras: [[LAPTOP, 0, 18], [PAWS_TYPE_B, 0, 17]] }),
+      build({
+        face: 'working',
+        tail: TAIL_LOW,
+        tailAt: TAIL_LOW_AT,
+        paws: null,
+        extras: [[LAPTOP, 0, LAPTOP_AT], [PAWS_TYPE_A, 0, PAWS_TYPE_AT]],
+      }),
+      build({
+        face: 'working',
+        tail: TAIL_LOW_B,
+        tailAt: TAIL_LOW_B_AT,
+        paws: null,
+        extras: [[LAPTOP, 0, LAPTOP_AT], [PAWS_TYPE_B, 0, PAWS_TYPE_AT]],
+      }),
     ],
   },
   // Scrunch… scrunch… ACHOO (droplet spray).
@@ -475,15 +680,15 @@ export const POSES = {
     frames: [
       build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
       build({ face: 'asleep', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-      build({ face: 'joy', tail: TAIL_UP_B, extras: [[SNEEZE_SPRAY, 0, 15]] }),
+      build({ face: 'joy', tail: TAIL_UP_B, extras: [[SNEEZE_SPRAY, 0, 14]] }),
     ],
   },
   // Batting at a toy on the floor.
   play: {
     ms: 180,
     frames: [
-      build({ face: 'excited', extras: [[ARM_PLAY_A, 0, 19]] }),
-      build({ face: 'excited', tail: TAIL_UP_B, extras: [[ARM_PLAY_B, 0, 20]] }),
+      build({ face: 'excited', extras: [[ARM_PLAY_A, 0, 22]] }),
+      build({ face: 'excited', tail: TAIL_UP_B, extras: [[ARM_PLAY_B, 0, 22]] }),
     ],
   },
   // Spun around too much — X eyes, everything droops.
@@ -491,16 +696,34 @@ export const POSES = {
     ms: 320,
     frames: [
       build({ face: 'dizzy', tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-      build({ face: 'dizzy', tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT }),
+      build({ face: 'dizzy', tail: TAIL_LOW_B, tailAt: TAIL_LOW_B_AT }),
     ],
   },
   // Picked up mid-air: saucer eyes, paws out, tail hanging.
   held: {
     ms: 500,
     frames: [
-      build({ face: 'curious', arm: ARMS_UP, armAt: 7, tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
-      build({ face: 'curious', arm: ARMS_UP, armAt: 8, tail: TAIL_LOW_B, tailAt: TAIL_LOW_AT }),
+      build({ face: 'curious', arm: ARMS_UP, armAt: 8, tail: TAIL_LOW, tailAt: TAIL_LOW_AT }),
+      build({ face: 'curious', arm: ARMS_UP, armAt: 9, tail: TAIL_LOW_B, tailAt: TAIL_LOW_B_AT }),
     ],
+  },
+  // Eyes shut, paw up, lick lick.
+  groom: {
+    ms: 420,
+    frames: [
+      build({ face: 'groom', tail: TAIL_LOW, tailAt: TAIL_LOW_AT, arm: ARM_GROOM_A, armAt: 12, extras: [[TONGUE, 0, TONGUE_AT]] }),
+      build({ face: 'groom', tail: TAIL_LOW_B, tailAt: TAIL_LOW_B_AT, arm: ARM_GROOM_B, armAt: 13, extras: [[TONGUE, 0, TONGUE_AT]] }),
+    ],
+  },
+  // Head down in the fish bowl, then up to chew.
+  eat: {
+    ms: 450,
+    frames: [EAT_A, EAT_B],
+  },
+  // If it fits, it sits. Head and paws peeking out of a box.
+  box: {
+    ms: 900,
+    frames: [boxFrame('happy'), boxFrame('happy'), boxFrame('happyBlink')],
   },
 }
 
