@@ -29,10 +29,14 @@ export default function PingContact() {
     e.preventDefault()
     if (status === 'pinging') return
 
-    if (!form.name.trim() || !EMAIL_RE.test(form.email.trim()) || form.message.trim().length < 10) {
-      setLines([
-        { text: 'ping: bad packet — need --name, a valid --from, and a --payload of at least a sentence', cls: 'text-red-400' },
-      ])
+    // Mirrors the /api/contact checks so a bad packet fails fast, per-flag
+    const problems = []
+    if (!form.name.trim()) problems.push('--name is empty')
+    if (!EMAIL_RE.test(form.email.trim())) problems.push('--from is not a valid email')
+    const payloadLen = form.message.trim().length
+    if (payloadLen < 10) problems.push(`--payload too small: ${payloadLen} bytes (min 10 — give me a sentence)`)
+    if (problems.length) {
+      setLines(problems.map((p) => ({ text: `ping: bad packet — ${p}`, cls: 'text-red-400' })))
       setStatus('error')
       return
     }
