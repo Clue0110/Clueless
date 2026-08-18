@@ -4,6 +4,7 @@ import { FiGithub, FiChevronDown } from 'react-icons/fi'
 import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
 import TiltCard from '../components/TiltCard'
+import NmapProjects from '../components/NmapProjects'
 import Tag from '../components/Tag'
 import { projects } from '../data/content'
 import { scaleIn } from '../utils/animations'
@@ -124,13 +125,20 @@ function ProjectCard({ project, index }) {
 }
 
 export default function Projects() {
+  const { isRecruiter, mode } = useMode()
   return (
-    <Section id="projects" title="Projects" devTitle="side_quests">
-      <div className="grid md:grid-cols-2 gap-6">
-        {projects.map((project, i) => (
-          <ProjectCard key={project.title} project={project} index={i} />
-        ))}
-      </div>
+    // Keyed by mode for the same reason as Experience: the two layouts are
+    // different trees and need the Section stagger to re-run on toggle.
+    <Section key={mode} id="projects" title="Projects" devTitle="side_quests">
+      {isRecruiter ? (
+        <div className="grid md:grid-cols-2 gap-6">
+          {projects.map((project, i) => (
+            <ProjectCard key={project.title} project={project} index={i} />
+          ))}
+        </div>
+      ) : (
+        <NmapProjects />
+      )}
     </Section>
   )
 }
