@@ -46,10 +46,12 @@ export default async function handler(req, res) {
     res.status(400).json({ error: 'Please add a valid email.' })
     return
   }
-  if (!message || typeof message !== 'string' || message.trim().length < 10) {
-    res.status(400).json({ error: 'Add a message (at least a sentence).' })
+  if (!message || typeof message !== 'string' || !message.trim()) {
+    res.status(400).json({ error: 'Add a message.' })
     return
   }
+  // key stays optional here: the recruiter form has no key field.
+  // The dev-mode ping form requires it client-side.
 
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {

@@ -33,8 +33,8 @@ export default function PingContact() {
     const problems = []
     if (!form.name.trim()) problems.push('--name is empty')
     if (!EMAIL_RE.test(form.email.trim())) problems.push('--from is not a valid email')
-    const payloadLen = form.message.trim().length
-    if (payloadLen < 10) problems.push(`--payload too small: ${payloadLen} bytes (min 10 — give me a sentence)`)
+    if (!form.key.trim()) problems.push('--key is empty')
+    if (!form.message.trim()) problems.push('--payload is empty')
     if (problems.length) {
       setLines(problems.map((p) => ({ text: `ping: bad packet — ${p}`, cls: 'text-red-400' })))
       setStatus('error')
@@ -129,7 +129,7 @@ export default function PingContact() {
                 />
               </Flag>
               <Flag flag="--key">
-                <input value={form.key} onChange={set('key')} placeholder="secret key (optional → subject line)" className={inputCls} />
+                <input value={form.key} onChange={set('key')} placeholder="becomes the subject line" className={inputCls} />
               </Flag>
               <Flag flag="--payload">
                 <textarea
