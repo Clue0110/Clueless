@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     return
   }
 
-  const { name, email, message } = req.body || {}
+  const { name, email, message, key } = req.body || {}
   if (!name || typeof name !== 'string' || !name.trim()) {
     res.status(400).json({ error: 'Please add your name.' })
     return
@@ -62,6 +62,8 @@ export default async function handler(req, res) {
   const cleanName = name.trim().slice(0, 120)
   const cleanEmail = email.trim().slice(0, 200)
   const cleanMsg = message.trim().slice(0, 5000)
+  // Dev-mode "ping" secret key — becomes the subject so pings are spottable
+  const cleanKey = typeof key === 'string' ? key.trim().slice(0, 120) : ''
 
   const summary = await summarize(cleanName, cleanMsg)
 
@@ -71,12 +73,13 @@ export default async function handler(req, res) {
       from,
       to,
       replyTo: cleanEmail,
-      subject: `Portfolio contact from ${cleanName}`,
+      subject: cleanKey || `Portfolio contact from ${cleanName}`,
       text: [
         summary ? `TL;DR: ${summary}` : null,
         summary ? '' : null,
         `Name:  ${cleanName}`,
         `Email: ${cleanEmail}`,
+        cleanKey ? `Key:   ${cleanKey}` : null,
         '',
         cleanMsg,
       ]

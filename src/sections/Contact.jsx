@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
 import ContactForm from '../components/ContactForm'
+import PingContact from '../components/PingContact'
 import { personal } from '../data/content'
 import { fadeInUp } from '../utils/animations'
 import { FiGithub, FiLinkedin, FiMail, FiCopy, FiCheck, FiFileText } from 'react-icons/fi'
 
 export default function Contact() {
-  const { isRecruiter, theme, setShowResume } = useMode()
+  const { isRecruiter, theme, mode, setShowResume } = useMode()
   const [copied, setCopied] = useState(false)
 
   const copyEmail = async () => {
@@ -35,7 +36,9 @@ export default function Contact() {
   ]
 
   return (
-    <Section id="contact" title="Get In Touch" devTitle="ping me">
+    // Keyed by mode: recruiter/dev render different form trees — remount
+    // re-runs the Section's once-only entrance stagger (same as Experience).
+    <Section key={mode} id="contact" title="Get In Touch" devTitle="ping me">
       <motion.div variants={fadeInUp} className="max-w-xl mx-auto text-center">
         <AnimatePresence mode="wait">
           <motion.p
@@ -51,8 +54,9 @@ export default function Contact() {
           </motion.p>
         </AnimatePresence>
 
-        {/* Contact form — sends email via /api/contact */}
-        <ContactForm />
+        {/* Contact form — sends email via /api/contact. Dev mode dresses the
+            same POST up as a simulated `ping` session. */}
+        {isRecruiter ? <ContactForm /> : <PingContact />}
 
         {/* Email copy button (fallback / direct) */}
         <motion.button

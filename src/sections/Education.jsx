@@ -2,13 +2,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import Section from '../components/Section'
 import Tag from '../components/Tag'
+import DpkgEducation from '../components/DpkgEducation'
 import { education } from '../data/content'
 import { fadeInUp } from '../utils/animations'
 
+// Recruiter mode only — dev mode renders DpkgEducation instead
 function EduCard({ edu, index }) {
-  const { isRecruiter, theme, mode } = useMode()
+  const { theme, mode } = useMode()
 
-  const highlight = isRecruiter ? edu.highlight.recruiter : edu.highlight.dev
+  const highlight = edu.highlight.recruiter
 
   return (
     <motion.div
@@ -26,9 +28,6 @@ function EduCard({ edu, index }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`text-xs px-3 py-1 rounded-full border ${theme.tagBg} ${theme.tagText} ${theme.tagBorder} ${theme.font}`}>
-            {edu.period}
-          </span>
           <span className={`text-xs px-3 py-1 rounded-full border ${theme.tagBg} ${theme.tagText} ${theme.tagBorder} font-mono`}>
             GPA: {edu.gpa}
           </span>
@@ -55,7 +54,6 @@ function EduCard({ edu, index }) {
           exit={{ opacity: 0 }}
           className={`text-sm mb-4 ${theme.muted} ${theme.font} leading-relaxed`}
         >
-          {isRecruiter ? '' : '// '}
           {highlight}
         </motion.p>
       </AnimatePresence>
@@ -71,13 +69,20 @@ function EduCard({ edu, index }) {
 }
 
 export default function Education() {
+  const { isRecruiter, mode } = useMode()
   return (
-    <Section id="education" title="Education" devTitle="education">
-      <div className="grid gap-6">
-        {education.map((edu, i) => (
-          <EduCard key={edu.school} edu={edu} index={i} />
-        ))}
-      </div>
+    // Keyed by mode: recruiter/dev are different trees — remount re-runs the
+    // Section's once-only entrance stagger (same pattern as Experience).
+    <Section key={mode} id="education" title="Education" devTitle="education">
+      {isRecruiter ? (
+        <div className="grid gap-6">
+          {education.map((edu, i) => (
+            <EduCard key={edu.school} edu={edu} index={i} />
+          ))}
+        </div>
+      ) : (
+        <DpkgEducation />
+      )}
     </Section>
   )
 }

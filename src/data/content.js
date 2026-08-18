@@ -24,6 +24,8 @@ export const education = [
   {
     school: 'New York University',
     degree: 'M.S. Computer Science',
+    pkg: 'nyu-cs-ms',
+    inProgress: true,
     period: '2024 – 2026',
     location: 'New York, NY',
     gpa: '3.9 / 4.0',
@@ -37,6 +39,7 @@ export const education = [
   {
     school: 'Manipal Institute of Technology',
     degree: 'B.S. Computer Science',
+    pkg: 'manipal-cs-bs',
     period: '2017 – 2021',
     location: 'Manipal, India',
     gpa: '3.95 / 4.0',
