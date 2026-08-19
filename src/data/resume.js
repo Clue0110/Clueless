@@ -3,6 +3,7 @@ export const resumeData = {
     name: 'Sai Akilesh Venigalla',
     location: 'San Francisco, CA 94107',
     tagline: '4+ Years of SWE Experience',
+    phone: '347-477-8764',
     email: 'clueless101.exe@gmail.com',
     linkedin: 'https://linkedin.com/in/sai-akilesh/',
     linkedinLabel: 'linkedin.com/in/sai-akilesh',

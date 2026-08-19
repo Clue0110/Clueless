@@ -16,6 +16,7 @@
     "@react-three/fiber": "^9.5.0",
     "@upstash/ratelimit": "^2.0.5",
     "@upstash/redis": "^1.34.3",
+    "computer-modern": "^0.1.3",
     "framer-motion": "^11.18.0",
     "openai": "^6.9.0",
     "react": "^19.2.4",

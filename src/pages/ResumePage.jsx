@@ -1,14 +1,20 @@
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FiArrowLeft, FiDownload, FiMail, FiGlobe, FiExternalLink } from 'react-icons/fi'
+import { FiArrowLeft, FiDownload, FiMail, FiGlobe, FiExternalLink, FiPhone } from 'react-icons/fi'
 import { FiGithub, FiLinkedin } from 'react-icons/fi'
 import { useMode } from '../context/ModeContext'
 import { resumeData } from '../data/resume'
+import 'computer-modern/cmu-serif.css'
+
+// The document mimics the LaTeX (Jake's Resume) template the PDF is built
+// from: Computer Modern serif, all-black ink, small-caps name, thin rules
+// under section titles, bold dates flush right. Mode theming stays out of
+// the page itself — only the chrome (top bar) follows the site theme.
+const CMU = '"CMU Serif", "Computer Modern", Georgia, "Times New Roman", serif'
 
 export default function ResumePage() {
   const { setShowResume, isRecruiter, theme } = useMode()
   const { header, experience, projects, skills, education } = resumeData
-  const accentColor = isRecruiter ? '#7c3aed' : '#10b981'
 
   // Lock background scroll
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function ResumePage() {
         </motion.button>
 
         <span className={`text-xs ${theme.muted} ${theme.font} hidden sm:block`}>
-          {isRecruiter ? 'Sai Akilesh Venigalla — Resume' : 'resume.tsx'}
+          {isRecruiter ? 'Sai Akilesh Venigalla — Resume' : 'resume.tex'}
         </span>
 
         <div className="flex items-center gap-2">
@@ -75,56 +81,61 @@ export default function ResumePage() {
             initial={{ y: 24, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-[780px] bg-white shadow-2xl"
-            style={{ fontFamily: '"Helvetica Neue", Arial, sans-serif' }}
+            className="w-full max-w-[820px] bg-white text-black shadow-2xl"
+            style={{ fontFamily: CMU }}
           >
-            <div className="px-4 pt-6 pb-8 sm:px-10 sm:pt-9 sm:pb-11">
+            <div className="px-4 pt-7 pb-9 sm:px-12 sm:pt-10 sm:pb-12">
 
               {/* ── Header ── */}
-              <div className="text-center pb-3 border-b-2" style={{ borderColor: accentColor }}>
+              <div className="text-center">
                 <h1
-                  className="text-xl sm:text-3xl font-black tracking-widest uppercase text-gray-900"
-                  style={{ letterSpacing: '0.12em' }}
+                  className="text-[26px] sm:text-[34px] leading-tight text-black"
+                  style={{ fontVariant: 'small-caps', letterSpacing: '0.04em', fontWeight: 500 }}
                 >
                   {header.name}
                 </h1>
-                <p className="text-xs text-gray-500 mt-1 mb-2">
-                  {header.location}&nbsp;&nbsp;·&nbsp;&nbsp;{header.tagline}
+                <p className="text-[12px] sm:text-[13px] text-black mt-0.5">
+                  {header.location}
+                  <span className="mx-2 text-gray-500">|</span>
+                  {header.tagline}
                 </p>
-                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs sm:text-[11px] text-gray-600">
-                  <a href={`mailto:${header.email}`} className="flex items-center gap-1 hover:text-gray-900 underline underline-offset-2">
+                <div className="flex flex-wrap items-center justify-center gap-x-3.5 gap-y-1 mt-1 text-[11px] sm:text-[12px] text-black">
+                  {header.phone && (
+                    <span className="flex items-center gap-1">
+                      <FiPhone size={10} /> {header.phone}
+                    </span>
+                  )}
+                  <a href={`mailto:${header.email}`} className="flex items-center gap-1 underline underline-offset-2 hover:text-gray-600">
                     <FiMail size={10} /> {header.email}
                   </a>
-                  <a href={header.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-gray-900 underline underline-offset-2">
+                  <a href={header.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 underline underline-offset-2 hover:text-gray-600">
                     <FiLinkedin size={10} /> {header.linkedinLabel}
                   </a>
-                  <a href={header.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-gray-900 underline underline-offset-2">
+                  <a href={header.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 underline underline-offset-2 hover:text-gray-600">
                     <FiGithub size={10} /> {header.githubLabel}
                   </a>
-                  <a href={header.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-gray-900 underline underline-offset-2">
+                  <a href={header.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 underline underline-offset-2 hover:text-gray-600">
                     <FiGlobe size={10} /> {header.websiteLabel}
                   </a>
                 </div>
               </div>
 
               {/* ── Experience ── */}
-              <ResumeSection title="Experience" accentColor={accentColor}>
+              <ResumeSection title="Experience">
                 {experience.map((job, i) => (
-                  <div key={i} className={i > 0 ? 'mt-4' : ''}>
+                  <div key={i} className={i > 0 ? 'mt-3.5' : ''}>
                     <div className="flex justify-between items-baseline gap-2">
-                      <span className="text-[13px] font-bold text-gray-900">{job.company}</span>
-                      <span className="text-xs sm:text-[11px] text-gray-500 whitespace-nowrap font-medium">{job.period}</span>
+                      <span className="text-[13px] sm:text-[14px] font-bold text-black">{job.title}</span>
+                      <span className="text-[11px] sm:text-[12.5px] font-bold text-black whitespace-nowrap">{job.period}</span>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5 mb-1">
-                      <span className="text-[12px] font-semibold text-gray-700 italic">{job.title}</span>
-                      <span className="hidden sm:inline text-gray-400 text-xs sm:text-[11px]">|</span>
-                      <span className="text-xs sm:text-[11px] text-gray-500 italic">{job.description}</span>
+                    <div className="text-[12px] sm:text-[13px] italic leading-snug mb-1">
+                      <span className="font-bold text-black">{job.company}</span>
+                      <span className="mx-1.5 text-gray-500 not-italic">|</span>
+                      <span className="text-gray-800">{job.description}</span>
                     </div>
-                    <ul className="list-disc list-outside ml-5 space-y-[3px]">
+                    <ul className="ml-4 space-y-[2px]">
                       {job.bullets.map((bullet, j) => (
-                        <li key={j} className="text-xs sm:text-[11.5px] text-gray-700 leading-relaxed">
-                          <BulletText text={bullet} accentColor={accentColor} />
-                        </li>
+                        <Bullet key={j} text={bullet} />
                       ))}
                     </ul>
                   </div>
@@ -132,22 +143,27 @@ export default function ResumePage() {
               </ResumeSection>
 
               {/* ── Projects ── */}
-              <ResumeSection title="Projects" accentColor={accentColor}>
+              <ResumeSection title="Projects">
                 {projects.map((proj, i) => (
-                  <div key={i} className={i > 0 ? 'mt-4' : ''}>
-                    <div className="flex items-baseline gap-1.5 mb-1">
-                      <span className="text-[13px] font-bold text-gray-900">{proj.title}</span>
-                      <span className="text-gray-400 text-xs sm:text-[11px]">|</span>
-                      <span className="text-xs sm:text-[11px] text-gray-500 italic">{proj.tech}</span>
-                      <a href={proj.link} target="_blank" rel="noopener noreferrer" className="ml-1 flex items-center gap-0.5 text-xs sm:text-[11px] hover:text-gray-900 underline underline-offset-2" style={{ color: accentColor }}>
-                        <FiExternalLink size={10} /> Link
+                  <div key={i} className={i > 0 ? 'mt-3' : ''}>
+                    <div className="flex justify-between items-baseline gap-2 mb-1">
+                      <span className="text-[12px] sm:text-[13px] leading-snug">
+                        <span className="font-bold text-black">{proj.title}</span>
+                        <span className="mx-1.5 text-gray-500">|</span>
+                        <span className="italic text-gray-800">{proj.tech}</span>
+                      </span>
+                      <a
+                        href={proj.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] sm:text-[12.5px] font-bold text-black underline underline-offset-2 whitespace-nowrap hover:text-gray-600"
+                      >
+                        Link
                       </a>
                     </div>
-                    <ul className="list-disc list-outside ml-5 space-y-[3px]">
+                    <ul className="ml-4 space-y-[2px]">
                       {proj.bullets.map((bullet, j) => (
-                        <li key={j} className="text-xs sm:text-[11.5px] text-gray-700 leading-relaxed">
-                          <BulletText text={bullet} accentColor={accentColor} />
-                        </li>
+                        <Bullet key={j} text={bullet} />
                       ))}
                     </ul>
                   </div>
@@ -155,26 +171,26 @@ export default function ResumePage() {
               </ResumeSection>
 
               {/* ── Technical Skills ── */}
-              <ResumeSection title="Technical Skills" accentColor={accentColor}>
-                <div className="space-y-2 sm:space-y-[5px]">
+              <ResumeSection title="Technical Skills">
+                <ul className="ml-4 space-y-[2px]">
                   {skills.map(({ category, items }, i) => (
-                    <div key={i} className="flex flex-col sm:flex-row sm:gap-2 text-xs sm:text-[11.5px]">
-                      <span className="font-bold text-gray-800 sm:w-44 sm:shrink-0">{category}:</span>
-                      <span className="text-gray-700">{items.join(', ')}</span>
-                    </div>
+                    <Bullet key={i} text={`**${category}**: ${items.join(', ')}`} />
                   ))}
-                </div>
+                </ul>
               </ResumeSection>
 
               {/* ── Education ── */}
-              <ResumeSection title="Education" accentColor={accentColor}>
+              <ResumeSection title="Education">
                 {education.map((edu, i) => (
-                  <div key={i} className={`flex justify-between items-baseline gap-2 ${i > 0 ? 'mt-2' : ''}`}>
-                    <span className="text-[12px]">
-                      <span className="font-bold text-gray-900">{edu.school}</span>
-                      <span className="text-gray-600 italic">&nbsp;|&nbsp;{edu.degree}&nbsp;|&nbsp;GPA: {edu.gpa}</span>
+                  <div key={i} className={`flex justify-between items-baseline gap-2 ${i > 0 ? 'mt-1.5' : ''}`}>
+                    <span className="text-[12px] sm:text-[13px] leading-snug">
+                      <span className="font-bold text-black">{edu.school}</span>
+                      <span className="mx-1.5 text-gray-500">|</span>
+                      <span className="italic text-gray-800">{edu.degree}</span>
+                      <span className="mx-1.5 text-gray-500">|</span>
+                      <span className="text-black">GPA: {edu.gpa}</span>
                     </span>
-                    <span className="text-xs sm:text-[11px] text-gray-500 font-semibold whitespace-nowrap">{edu.period}</span>
+                    <span className="text-[11px] sm:text-[12.5px] font-bold text-black whitespace-nowrap">{edu.period}</span>
                   </div>
                 ))}
               </ResumeSection>
@@ -187,38 +203,38 @@ export default function ResumePage() {
   )
 }
 
-// ── Section wrapper ──
-function ResumeSection({ title, accentColor, children }) {
+// ── Section wrapper: LaTeX \section — title with a thin full-width rule ──
+function ResumeSection({ title, children }) {
   return (
-    <div className="mt-5">
-      <div className="pb-[3px] mb-2" style={{ borderBottom: `1.5px solid ${accentColor}` }}>
-        <h2
-          className="text-xs sm:text-[11px] font-black uppercase tracking-widest"
-          style={{ color: accentColor, letterSpacing: '0.15em' }}
-        >
-          {title}
-        </h2>
-      </div>
+    <div className="mt-4 sm:mt-5">
+      <h2
+        className="text-[14px] sm:text-[16px] text-black pb-[2px] mb-1.5 border-b border-black"
+        style={{ fontVariant: 'small-caps', fontWeight: 500, letterSpacing: '0.02em' }}
+      >
+        {title}
+      </h2>
       {children}
     </div>
   )
 }
 
-// ── Bold highlighting ──
-// • **text** → bold + accent color (manual, controlled from resume.js)
-function BulletText({ text, accentColor }) {
+// ── Bullet with LaTeX-style ∙ marker; **text** renders bold black ──
+function Bullet({ text }) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g)
   return (
-    <>
-      {parts.map((part, i) =>
-        part.startsWith('**') && part.endsWith('**') ? (
-          <strong key={i} className="font-bold text-gray-900">
-            {part.slice(2, -2)}
-          </strong>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
-    </>
+    <li className="flex gap-2 text-[11.5px] sm:text-[12.5px] text-black leading-relaxed">
+      <span className="select-none">•</span>
+      <span>
+        {parts.map((part, i) =>
+          part.startsWith('**') && part.endsWith('**') ? (
+            <strong key={i} className="font-bold text-black">
+              {part.slice(2, -2)}
+            </strong>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </span>
+    </li>
   )
 }
