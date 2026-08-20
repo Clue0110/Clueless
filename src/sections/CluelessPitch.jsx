@@ -6,6 +6,26 @@ import SpeechBubble from '../components/SpeechBubble'
 import ResumePage from '../pages/ResumePage'
 import { resumeData } from '../data/resume'
 
+// The LLM is told to keep **bold** markers inside fullResume only, but belt
+// and braces: render any that leak into the pitch cards as real bold, and
+// strip them from spoken lines (the typewriter can't render markup).
+const stripBold = (s = '') => String(s).replaceAll('**', '')
+
+function RichText({ text }) {
+  const parts = String(text ?? '').split(/(\*\*[^*]+\*\*)/g)
+  return (
+    <>
+      {parts.map((p, i) =>
+        p.startsWith('**') && p.endsWith('**') ? (
+          <strong key={i} className="font-semibold">{p.slice(2, -2)}</strong>
+        ) : (
+          <span key={i}>{p}</span>
+        ),
+      )}
+    </>
+  )
+}
+
 const ANCHOR_ORDER = ['summary', 'highlights', 'matchedSkills', 'relevantProjects', 'education']
 const ANCHOR_TITLES = {
   summary: 'Summary',
@@ -165,7 +185,7 @@ export default function CluelessPitch() {
               <div className="min-h-[84px] flex items-end">
                 <AnimatePresence mode="wait">
                   {current && (
-                    <SpeechBubble key={beat} text={current.line} onDone={scheduleAdvance} />
+                    <SpeechBubble key={beat} text={stripBold(current.line)} onDone={scheduleAdvance} />
                   )}
                   {ended && (
                     <SpeechBubble
@@ -189,29 +209,31 @@ export default function CluelessPitch() {
                 </div>
               )}
 
-              {ended && (
-                <div className="flex flex-col items-center gap-2">
-                  {tailoredResume && (
-                    <button
-                      onClick={() => setShowTailored(true)}
-                      className={`rounded-xl px-4 py-2 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover}`}
-                    >
-                      show the tailored resume 📄
-                    </button>
-                  )}
-                  <a
-                    href={`/resume/${pitch.recommendedResumeVersion}/resume.pdf`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`rounded-xl border px-4 py-2 text-sm font-semibold ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
+              {/* Resume actions are available as soon as the pitch exists —
+                  no need to sit through the whole walkthrough first. */}
+              <div className="flex flex-col items-center gap-2">
+                {tailoredResume && (
+                  <button
+                    onClick={() => setShowTailored(true)}
+                    className={`rounded-xl px-4 py-2 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover}`}
                   >
-                    Download the PDF
-                  </a>
+                    show the tailored resume 📄
+                  </button>
+                )}
+                <a
+                  href={`/resume/${pitch.recommendedResumeVersion}/resume.pdf`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
+                >
+                  Download the PDF
+                </a>
+                {ended && (
                   <button onClick={() => setBeat(0)} className={`text-xs underline ${theme.muted}`}>
                     replay the tour
                   </button>
-                </div>
-              )}
+                )}
+              </div>
 
               <button onClick={reset} className={`text-xs underline ${theme.muted}`}>
                 try another job description
@@ -250,7 +272,7 @@ function MatchHeader({ summary }) {
         </div>
         <div className={`text-4xl font-bold ${theme.accent}`}>{summary.score}%</div>
       </div>
-      <p className={`mt-2 ${theme.muted}`}>{summary.oneLiner}</p>
+      <p className={`mt-2 ${theme.muted}`}><RichText text={summary.oneLiner} /></p>
     </div>
   )
 }
@@ -275,14 +297,14 @@ function AnchorCard({ title, active, setRef, children }) {
 
 function AnchorBody({ anchor, data }) {
   const { theme } = useMode()
-  if (anchor === 'summary') return <p className={theme.text}>{data.summary}</p>
-  if (anchor === 'education') return <p className={theme.text}>{data.education}</p>
+  if (anchor === 'summary') return <p className={theme.text}><RichText text={data.summary} /></p>
+  if (anchor === 'education') return <p className={theme.text}><RichText text={data.education} /></p>
   if (anchor === 'matchedSkills')
     return (
       <div className="flex flex-wrap gap-2">
         {data.matchedSkills.map((s) => (
           <span key={s} className={`rounded-full border px-3 py-1 text-xs ${theme.tagBg} ${theme.tagText} ${theme.tagBorder}`}>
-            {s}
+            {stripBold(s)}
           </span>
         ))}
       </div>
@@ -293,7 +315,7 @@ function AnchorBody({ anchor, data }) {
         {data.highlights.map((h, i) => (
           <li key={i} className={`flex gap-2 ${theme.text}`}>
             <span className={theme.accent}>▹</span>
-            <span>{h}</span>
+            <span><RichText text={h} /></span>
           </li>
         ))}
       </ul>
@@ -303,8 +325,8 @@ function AnchorBody({ anchor, data }) {
       <ul className="space-y-3">
         {data.relevantProjects.map((p, i) => (
           <li key={i}>
-            <div className={`font-semibold ${theme.text}`}>{p.title}</div>
-            <div className={theme.muted}>{p.why}</div>
+            <div className={`font-semibold ${theme.text}`}>{stripBold(p.title)}</div>
+            <div className={theme.muted}><RichText text={p.why} /></div>
           </li>
         ))}
       </ul>

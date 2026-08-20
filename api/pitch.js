@@ -150,6 +150,7 @@ OUTPUT (enforced by the response schema):
 - fullResume: a complete, ready-to-read resume tailored to THIS job. Rules:
   - experience: reverse-chronological. company/title/period copied EXACTLY from the knowledge base — never altered. Include every full-time role; include internships only when relevant to the JD. 3-5 bullets for the most relevant roles, 1-2 for the rest. Re-word bullets to lead with what the JD cares about, but every fact and metric must come from the knowledge base.
   - Wrap key metrics and JD-relevant keywords in **double asterisks** (the renderer bolds them), e.g. "Accelerated payments by **85%** with a **Kafka** pipeline". Use sparingly — 1-3 bolds per bullet.
+  - The ** markers are ONLY for fullResume bullets. Every other field — matchSummary, tailoredResume, walkthrough lines — must be plain text with no asterisks.
   - projects: the 2-3 most relevant, with their real links ("" if none).
   - skills: 3-5 categories, ordering JD-relevant items first. Only skills present in the knowledge base.
   - education: both schools, copied factually.
