@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useMode } from '../context/ModeContext'
 import Clueless from '../components/Clueless'
 import SpeechBubble from '../components/SpeechBubble'
+import ResumePage from '../pages/ResumePage'
+import { resumeData } from '../data/resume'
 
 const ANCHOR_ORDER = ['summary', 'highlights', 'matchedSkills', 'relevantProjects', 'education']
 const ANCHOR_TITLES = {
@@ -23,6 +25,19 @@ export default function CluelessPitch() {
 
   const [beat, setBeat] = useState(-1) // -1 idle, 0..n-1 touring, n ended
   const [playing, setPlaying] = useState(true)
+  const [showTailored, setShowTailored] = useState(false)
+
+  // The LLM writes a full resume in the resume.js shape; the header (contact
+  // info) stays the real, static one so it can never be hallucinated.
+  const tailoredResume = pitch?.fullResume
+    ? {
+        header: { ...resumeData.header, tagline: pitch.fullResume.tagline || resumeData.header.tagline },
+        experience: pitch.fullResume.experience,
+        projects: pitch.fullResume.projects,
+        skills: pitch.fullResume.skills,
+        education: pitch.fullResume.education,
+      }
+    : null
 
   const anchorRefs = useRef({})
   const timerRef = useRef()
@@ -155,7 +170,7 @@ export default function CluelessPitch() {
                   {ended && (
                     <SpeechBubble
                       key="end"
-                      text={"that's my case! grab sai's resume to take with you 👇"}
+                      text={"that's my case! i even rewrote sai's resume for this exact role — take a look 👇"}
                     />
                   )}
                 </AnimatePresence>
@@ -176,13 +191,21 @@ export default function CluelessPitch() {
 
               {ended && (
                 <div className="flex flex-col items-center gap-2">
+                  {tailoredResume && (
+                    <button
+                      onClick={() => setShowTailored(true)}
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover}`}
+                    >
+                      show the tailored resume 📄
+                    </button>
+                  )}
                   <a
                     href={`/resume/${pitch.recommendedResumeVersion}/resume.pdf`}
                     target="_blank"
                     rel="noreferrer"
-                    className={`rounded-xl px-4 py-2 text-sm font-semibold text-white ${theme.accentBg} ${theme.accentHover}`}
+                    className={`rounded-xl border px-4 py-2 text-sm font-semibold ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
                   >
-                    Download the resume
+                    Download the PDF
                   </a>
                   <button onClick={() => setBeat(0)} className={`text-xs underline ${theme.muted}`}>
                     replay the tour
@@ -197,6 +220,19 @@ export default function CluelessPitch() {
           </div>
         </div>
       )}
+
+      {/* Full-screen tailored resume, rendered by the same A4 preview as the
+          real resume but fed the LLM-generated data. */}
+      <AnimatePresence>
+        {showTailored && tailoredResume && (
+          <ResumePage
+            data={tailoredResume}
+            tailored
+            onClose={() => setShowTailored(false)}
+            pdfHref={`/resume/${pitch.recommendedResumeVersion}/resume.pdf`}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }

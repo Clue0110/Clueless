@@ -12,9 +12,14 @@ import 'computer-modern/cmu-serif.css'
 // the page itself — only the chrome (top bar) follows the site theme.
 const CMU = '"CMU Serif", "Computer Modern", Georgia, "Times New Roman", serif'
 
-export default function ResumePage() {
+// By default this renders the static resumeData and closes via the mode
+// context. The Clueless pitch reuses it with `data` = an LLM-tailored resume
+// in the same shape, its own onClose, and the recommended PDF version.
+export default function ResumePage({ data = resumeData, onClose = null, pdfHref = null, tailored = false }) {
   const { setShowResume, isRecruiter, theme } = useMode()
-  const { header, experience, projects, skills, education } = resumeData
+  const { header, experience, projects, skills, education } = data
+  const close = onClose || (() => setShowResume(false))
+  const pdf = pdfHref || `${import.meta.env.BASE_URL}resume.pdf`
 
   // Lock background scroll
   useEffect(() => {
@@ -34,7 +39,7 @@ export default function ResumePage() {
       {/* ── Top bar ── */}
       <div className={`flex-shrink-0 flex items-center justify-between gap-2 px-3 sm:px-6 py-2 border-b ${theme.border} ${theme.card} backdrop-blur`}>
         <motion.button
-          onClick={() => setShowResume(false)}
+          onClick={close}
           whileHover={{ x: -3 }}
           whileTap={{ scale: 0.95 }}
           className={`flex min-h-11 items-center gap-2 pr-2 text-sm ${theme.muted} transition-colors ${theme.font} hover:${isRecruiter ? 'text-violet-400' : 'text-green-400'}`}
@@ -44,12 +49,12 @@ export default function ResumePage() {
         </motion.button>
 
         <span className={`text-xs ${theme.muted} ${theme.font} hidden sm:block`}>
-          {isRecruiter ? 'Sai Akilesh Venigalla — Resume' : 'resume.tex'}
+          {tailored ? 'tailored for this role ✨' : isRecruiter ? 'Sai Akilesh Venigalla — Resume' : 'resume.tex'}
         </span>
 
         <div className="flex items-center gap-2">
           <motion.a
-            href={`${import.meta.env.BASE_URL}resume.pdf`}
+            href={pdf}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.04 }}
@@ -60,7 +65,7 @@ export default function ResumePage() {
             {isRecruiter ? 'View PDF' : 'view'}
           </motion.a>
           <motion.a
-            href={`${import.meta.env.BASE_URL}resume.pdf`}
+            href={pdf}
             download="Resume_Venigalla.pdf"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
@@ -152,14 +157,16 @@ export default function ResumePage() {
                         <span className="mx-1.5 text-gray-500">|</span>
                         <span className="italic text-gray-800">{proj.tech}</span>
                       </span>
-                      <a
-                        href={proj.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[11px] sm:text-[12.5px] font-bold text-black underline underline-offset-2 whitespace-nowrap hover:text-gray-600"
-                      >
-                        Link
-                      </a>
+                      {proj.link && (
+                        <a
+                          href={proj.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] sm:text-[12.5px] font-bold text-black underline underline-offset-2 whitespace-nowrap hover:text-gray-600"
+                        >
+                          Link
+                        </a>
+                      )}
                     </div>
                     <ul className="ml-4 space-y-[2px]">
                       {proj.bullets.map((bullet, j) => (

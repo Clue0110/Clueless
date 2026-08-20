@@ -43,6 +43,72 @@ const PITCH_SCHEMA = {
       required: ['summary', 'highlights', 'matchedSkills', 'relevantProjects', 'education'],
       additionalProperties: false,
     },
+    // A complete tailored resume in the same shape as the site's resume.js —
+    // the frontend renders it in the A4 resume preview.
+    fullResume: {
+      type: 'object',
+      properties: {
+        tagline: { type: 'string', description: 'One short header line tailored to the JD, e.g. "4+ Years Building Distributed Payment Systems"' },
+        experience: {
+          type: 'array',
+          description: 'Reverse-chronological. Companies, titles, and periods copied EXACTLY from the knowledge base; bullets re-angled toward the JD.',
+          items: {
+            type: 'object',
+            properties: {
+              company: { type: 'string' },
+              title: { type: 'string' },
+              period: { type: 'string' },
+              description: { type: 'string', description: 'One italic line under the title summarizing the role' },
+              bullets: { type: 'array', items: { type: 'string' } },
+            },
+            required: ['company', 'title', 'period', 'description', 'bullets'],
+            additionalProperties: false,
+          },
+        },
+        projects: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              title: { type: 'string' },
+              tech: { type: 'string', description: 'Comma-separated tech list' },
+              link: { type: 'string', description: 'Project URL from the knowledge base, or "" if none' },
+              bullets: { type: 'array', items: { type: 'string' } },
+            },
+            required: ['title', 'tech', 'link', 'bullets'],
+            additionalProperties: false,
+          },
+        },
+        skills: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              category: { type: 'string' },
+              items: { type: 'array', items: { type: 'string' } },
+            },
+            required: ['category', 'items'],
+            additionalProperties: false,
+          },
+        },
+        education: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              school: { type: 'string' },
+              degree: { type: 'string' },
+              gpa: { type: 'string' },
+              period: { type: 'string' },
+            },
+            required: ['school', 'degree', 'gpa', 'period'],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ['tagline', 'experience', 'projects', 'skills', 'education'],
+      additionalProperties: false,
+    },
     walkthrough: {
       type: 'array',
       description: 'Ordered tour, 4-6 beats. Start with wave, end with celebrate.',
@@ -62,7 +128,7 @@ const PITCH_SCHEMA = {
     },
     recommendedResumeVersion: { type: 'string' },
   },
-  required: ['matchSummary', 'tailoredResume', 'walkthrough', 'recommendedResumeVersion'],
+  required: ['matchSummary', 'tailoredResume', 'fullResume', 'walkthrough', 'recommendedResumeVersion'],
   additionalProperties: false,
 }
 
@@ -81,6 +147,12 @@ OUTPUT (enforced by the response schema):
 - tailoredResume.highlights: 3-5 bullets re-angled from the knowledge base, most relevant to the JD.
 - tailoredResume.matchedSkills: skills the JD asks for that Sai genuinely has.
 - tailoredResume.relevantProjects: the 1-3 knowledge-base projects that fit, each with a one-line "why it matters for this role".
+- fullResume: a complete, ready-to-read resume tailored to THIS job. Rules:
+  - experience: reverse-chronological. company/title/period copied EXACTLY from the knowledge base — never altered. Include every full-time role; include internships only when relevant to the JD. 3-5 bullets for the most relevant roles, 1-2 for the rest. Re-word bullets to lead with what the JD cares about, but every fact and metric must come from the knowledge base.
+  - Wrap key metrics and JD-relevant keywords in **double asterisks** (the renderer bolds them), e.g. "Accelerated payments by **85%** with a **Kafka** pipeline". Use sparingly — 1-3 bolds per bullet.
+  - projects: the 2-3 most relevant, with their real links ("" if none).
+  - skills: 3-5 categories, ordering JD-relevant items first. Only skills present in the knowledge base.
+  - education: both schools, copied factually.
 - walkthrough: a 4-6 beat guided tour. Each beat picks one anchor, a pose, and a spoken line (1-2 sentences) arguing the fit like a proud pet showing off its human. Open with a "wave" beat; close with a "celebrate" beat; use "point" while making a case.
 - recommendedResumeVersion: one of [${RESUME_VERSIONS.join(', ')}]. They are near-identical; use "v0" unless you have a specific reason.
 
