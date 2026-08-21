@@ -63,6 +63,9 @@ export default async function handler(req, res) {
   try {
     browser = await launchBrowser()
     const page = await browser.newPage()
+    // Fixed desktop-Letter viewport: the layout must not depend on which
+    // device asked for the PDF — a phone gets the same full-width page.
+    await page.setViewport({ width: 816, height: 1056, deviceScaleFactor: 1 })
     // JS off: the document is static and parts of it are LLM-generated.
     await page.setJavaScriptEnabled(false)
     await page.setContent(buildResumeHtml(data), { waitUntil: 'networkidle0', timeout: 20_000 })

@@ -4,6 +4,7 @@ import { FiArrowLeft, FiDownload, FiMail, FiGlobe, FiExternalLink, FiPhone } fro
 import { FiGithub, FiLinkedin } from 'react-icons/fi'
 import { useMode } from '../context/ModeContext'
 import { resumeData } from '../data/resume'
+import { downloadResumePdf } from '../utils/downloadResumePdf'
 import 'computer-modern/cmu-serif.css'
 
 // The document mimics the LaTeX (Jake's Resume) template the PDF is built
@@ -28,24 +29,11 @@ export default function ResumePage({ data = resumeData, onClose = null, pdfHref 
   async function downloadPdf() {
     if (rendering) return
     setRendering(true)
-    try {
-      const res = await fetch('/api/resume-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data }),
-      })
-      if (!res.ok || !res.headers.get('content-type')?.includes('pdf')) throw new Error('render failed')
-      const url = URL.createObjectURL(await res.blob())
-      const a = document.createElement('a')
-      a.href = url
-      a.download = tailored ? 'Resume_Venigalla_Tailored.pdf' : 'Resume_Venigalla.pdf'
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch {
-      window.open(pdf, '_blank', 'noopener') // static fallback
-    } finally {
-      setRendering(false)
-    }
+    await downloadResumePdf(data, {
+      filename: tailored ? 'Resume_Venigalla_Tailored.pdf' : 'Resume_Venigalla.pdf',
+      fallbackHref: pdf,
+    })
+    setRendering(false)
   }
 
   // Lock background scroll

@@ -5,6 +5,7 @@ import Clueless from '../components/Clueless'
 import SpeechBubble from '../components/SpeechBubble'
 import ResumePage from '../pages/ResumePage'
 import { resumeData } from '../data/resume'
+import { downloadResumePdf } from '../utils/downloadResumePdf'
 
 // The LLM is told to keep **bold** markers inside fullResume only, but belt
 // and braces: render any that leak into the pitch cards as real bold, and
@@ -46,6 +47,7 @@ export default function CluelessPitch() {
   const [beat, setBeat] = useState(-1) // -1 idle, 0..n-1 touring, n ended
   const [playing, setPlaying] = useState(true)
   const [showTailored, setShowTailored] = useState(false)
+  const [pdfRendering, setPdfRendering] = useState(false)
 
   // The LLM writes a full resume in the resume.js shape; the header (contact
   // info) stays the real, static one so it can never be hallucinated.
@@ -220,14 +222,23 @@ export default function CluelessPitch() {
                     show the tailored resume 📄
                   </button>
                 )}
-                <a
-                  href={`/resume/${pitch.recommendedResumeVersion}/resume.pdf`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`rounded-xl border px-4 py-2 text-sm font-semibold ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
+                <button
+                  disabled={pdfRendering}
+                  onClick={async () => {
+                    if (pdfRendering) return
+                    setPdfRendering(true)
+                    // Generate a PDF of the tailored resume; if this pitch
+                    // predates fullResume, download the standard one instead.
+                    await downloadResumePdf(tailoredResume || resumeData, {
+                      filename: tailoredResume ? 'Resume_Venigalla_Tailored.pdf' : 'Resume_Venigalla.pdf',
+                      fallbackHref: '/resume.pdf',
+                    })
+                    setPdfRendering(false)
+                  }}
+                  className={`rounded-xl border px-4 py-2 text-sm font-semibold disabled:opacity-60 ${theme.card} ${theme.border} ${theme.text} hover:opacity-80`}
                 >
-                  Download the PDF
-                </a>
+                  {pdfRendering ? 'rendering the pdf…' : 'Download the PDF'}
+                </button>
                 {ended && (
                   <button onClick={() => setBeat(0)} className={`text-xs underline ${theme.muted}`}>
                     replay the tour
@@ -251,7 +262,7 @@ export default function CluelessPitch() {
             data={tailoredResume}
             tailored
             onClose={() => setShowTailored(false)}
-            pdfHref={`/resume/${pitch.recommendedResumeVersion}/resume.pdf`}
+            pdfHref="/resume.pdf"
           />
         )}
       </AnimatePresence>
