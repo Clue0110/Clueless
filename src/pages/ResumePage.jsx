@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiArrowLeft, FiDownload, FiMail, FiGlobe, FiExternalLink, FiPhone } from 'react-icons/fi'
 import { FiGithub, FiLinkedin } from 'react-icons/fi'
@@ -20,6 +20,33 @@ export default function ResumePage({ data = resumeData, onClose = null, pdfHref 
   const { header, experience, projects, skills, education } = data
   const close = onClose || (() => setShowResume(false))
   const pdf = pdfHref || `${import.meta.env.BASE_URL}resume.pdf`
+  const [rendering, setRendering] = useState(false)
+
+  // Download = print THIS document server-side (headless Chromium), so the
+  // PDF always matches the preview — including tailored resumes. Falls back
+  // to the static PDF if the API is unavailable (e.g. plain `vite dev`).
+  async function downloadPdf() {
+    if (rendering) return
+    setRendering(true)
+    try {
+      const res = await fetch('/api/resume-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data }),
+      })
+      if (!res.ok || !res.headers.get('content-type')?.includes('pdf')) throw new Error('render failed')
+      const url = URL.createObjectURL(await res.blob())
+      const a = document.createElement('a')
+      a.href = url
+      a.download = tailored ? 'Resume_Venigalla_Tailored.pdf' : 'Resume_Venigalla.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      window.open(pdf, '_blank', 'noopener') // static fallback
+    } finally {
+      setRendering(false)
+    }
+  }
 
   // Lock background scroll
   useEffect(() => {
@@ -64,16 +91,16 @@ export default function ResumePage({ data = resumeData, onClose = null, pdfHref 
             <FiExternalLink size={13} />
             {isRecruiter ? 'View PDF' : 'view'}
           </motion.a>
-          <motion.a
-            href={pdf}
-            download="Resume_Venigalla.pdf"
+          <motion.button
+            onClick={downloadPdf}
+            disabled={rendering}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
-            className={`flex min-h-11 items-center gap-2 px-3 sm:px-4 rounded-lg text-xs font-semibold text-white ${theme.accentBg} ${theme.accentHover} transition-colors ${theme.font}`}
+            className={`flex min-h-11 items-center gap-2 px-3 sm:px-4 rounded-lg text-xs font-semibold text-white disabled:opacity-60 ${theme.accentBg} ${theme.accentHover} transition-colors ${theme.font}`}
           >
             <FiDownload size={13} />
-            {isRecruiter ? 'Download PDF' : 'download'}
-          </motion.a>
+            {rendering ? (isRecruiter ? 'Rendering…' : 'rendering…') : isRecruiter ? 'Download PDF' : 'download'}
+          </motion.button>
         </div>
       </div>
 
